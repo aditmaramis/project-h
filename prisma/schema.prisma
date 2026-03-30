@@ -1,0 +1,134 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ──────────────────────────────────────────────
+
+enum ItemCondition {
+  NEW
+  LIKE_NEW
+  GOOD
+  FAIR
+}
+
+enum ItemStatus {
+  AVAILABLE
+  RESERVED
+  DONATED
+}
+
+// ─── Models ─────────────────────────────────────────────
+
+/// Synced from Supabase auth.users via a Postgres trigger.
+/// Profile.id always matches the auth.users.id UUID.
+model Profile {
+  id        String   @id @db.Uuid
+  email     String   @unique
+  name      String?
+  avatarUrl String?
+  bio       String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items         Item[]
+  messages      Message[]
+  conversations ConversationParticipant[]
+
+  @@map("profiles")
+}
+
+model Category {
+  id   String @id @default(cuid())
+  name String @unique
+  slug String @unique
+  icon String? // lucide icon name
+
+  items Item[]
+
+  @@map("categories")
+}
+
+model Item {
+  id          String        @id @default(cuid())
+  title       String
+  description String
+  images      String[]      // Supabase Storage URLs
+  condition   ItemCondition
+  status      ItemStatus    @default(AVAILABLE)
+
+  // Location
+  latitude  Float
+  longitude Float
+  address   String?
+
+  // Relations
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  donorId String @db.Uuid
+  donor   Profile @relation(fields: [donorId], references: [id])
+
+  conversations Conversation[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([latitude, longitude])
+  @@index([categoryId])
+  @@index([donorId])
+  @@map("items")
+}
+
+model Conversation {
+  id String @id @default(cuid())
+
+  itemId String
+  item   Item   @relation(fields: [itemId], references: [id])
+
+  participants ConversationParticipant[]
+  messages     Message[]
+
+  createdAt DateTime @default(now())
+
+  @@index([itemId])
+  @@map("conversations")
+}
+
+model ConversationParticipant {
+  id String @id @default(cuid())
+
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  profileId String  @db.Uuid
+  profile   Profile @relation(fields: [profileId], references: [id])
+
+  joinedAt DateTime @default(now())
+
+  @@unique([conversationId, profileId])
+  @@map("conversation_participants")
+}
+
+model Message {
+  id String @id @default(cuid())
+
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  senderId String  @db.Uuid
+  sender   Profile @relation(fields: [senderId], references: [id])
+
+  content   String
+  createdAt DateTime  @default(now())
+  readAt    DateTime?
+
+  @@index([conversationId, createdAt])
+  @@index([senderId])
+  @@map("messages")
+}
