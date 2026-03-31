@@ -1,3 +1,5 @@
+import { Header } from '@/components/layout/header';
+
 export default function MainLayout({
 	children,
 }: {
@@ -5,9 +7,8 @@ export default function MainLayout({
 }) {
 	return (
 		<>
-			{/* TODO: Header component */}
+			<Header />
 			<main className="flex-1">{children}</main>
-			{/* TODO: Footer component */}
 		</>
 	);
 }

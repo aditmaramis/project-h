@@ -42,7 +42,7 @@
 - `/` — Home (app/(main)/page.tsx)
 - `/items` — Browse items
 - `/items/[id]` — Item detail
-- `/login`, `/signup` — Auth routes (app/(auth)/)
+- Auth is modal-only (no standalone /login or /signup pages)
 - `/dashboard` — User dashboard (protected)
 - `/dashboard/items/new` — Create item (protected)
 - `/dashboard/items/[id]/edit` — Edit item (protected)

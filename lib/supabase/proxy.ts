@@ -34,7 +34,7 @@ export async function updateSession(request: NextRequest) {
 		data: { user },
 	} = await supabase.auth.getUser();
 
-	// Protected routes: redirect to /login if not authenticated
+	// Protected routes: redirect to landing page if not authenticated
 	const protectedPaths = ['/dashboard', '/items/new', '/chat'];
 	const isProtected = protectedPaths.some((path) =>
 		request.nextUrl.pathname.startsWith(path),
@@ -42,19 +42,8 @@ export async function updateSession(request: NextRequest) {
 
 	if (isProtected && !user) {
 		const url = request.nextUrl.clone();
-		url.pathname = '/login';
-		url.searchParams.set('redirectTo', request.nextUrl.pathname);
-		return NextResponse.redirect(url);
-	}
-
-	// If logged-in user visits /login or /signup, redirect to home
-	if (
-		user &&
-		(request.nextUrl.pathname === '/login' ||
-			request.nextUrl.pathname === '/signup')
-	) {
-		const url = request.nextUrl.clone();
 		url.pathname = '/';
+		url.searchParams.set('redirectTo', request.nextUrl.pathname);
 		return NextResponse.redirect(url);
 	}
 

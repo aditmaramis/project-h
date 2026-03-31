@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import { Gift } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { AuthModal } from '@/components/auth-modal';
 
 export function Header() {
 	return (
@@ -12,8 +14,22 @@ export function Header() {
 					<Gift className="h-6 w-6" />
 					Hibah
 				</Link>
-				<nav className="flex items-center gap-4">
-					{/* TODO: Navigation links + auth state */}
+				<nav className="flex items-center gap-2">
+					<AuthModal
+						mode="login"
+						trigger={
+							<Button
+								variant="ghost"
+								size="sm"
+							>
+								Log in
+							</Button>
+						}
+					/>
+					<AuthModal
+						mode="signup"
+						trigger={<Button size="sm">Sign up</Button>}
+					/>
 				</nav>
 			</div>
 		</header>

@@ -25,7 +25,7 @@ All authentication in Hibah is handled exclusively by **Supabase Auth**. No othe
 ## Sign In / Sign Up Must Be Modals
 
 - Login and signup flows **must always render as modals** (dialog overlays), not as standalone pages.
-- The `(auth)/login` and `(auth)/signup` routes exist for deep-link / redirect support, but their UI must present a modal dialog over the current page context.
+- There are **no** standalone `/login` or `/signup` pages — the `(auth)` route group has been removed.
 - Use a shared `AuthModal` client component wrapping shadcn `Dialog` for both sign-in and sign-up forms.
 - Trigger the modal from header/nav buttons — never navigate away from the current page to show auth.
 
@@ -53,12 +53,12 @@ const isProtected = protectedPaths.some((path) =>
 	request.nextUrl.pathname.startsWith(path),
 );
 if (isProtected && !user) {
-	// Redirect to /login with redirectTo param
+	// Redirect to landing page with redirectTo param
 }
 ```
 
-- Unauthenticated users hitting a protected route are redirected to `/login?redirectTo=<original_path>`.
-- After successful auth, redirect the user back to the `redirectTo` path.
+- Unauthenticated users hitting a protected route are redirected to `/` (landing page) with `?redirectTo=<original_path>`.
+- After successful auth (via modal), redirect the user back to the `redirectTo` path.
 
 ## Auth Check in API Routes (Required)
 
@@ -79,7 +79,7 @@ if (!user) {
 
 ## OAuth Callback
 
-The callback route at `app/auth/callback/route.ts` exchanges the auth code for a session. It redirects to the `next` query param on success, or `/login?error=auth-code-error` on failure.
+The callback route at `app/auth/callback/route.ts` exchanges the auth code for a session. It redirects to the `next` query param on success, or `/?error=auth-code-error` on failure.
 
 ## Session Refresh
 
@@ -87,5 +87,5 @@ The callback route at `app/auth/callback/route.ts` exchanges the auth code for a
 
 ## Logged-In User Redirects
 
-- Authenticated users visiting `/login` or `/signup` are redirected to `/`.
-- This is handled in `updateSession()` — do not duplicate this logic elsewhere.
+- Since there are no standalone `/login` or `/signup` pages, no redirect logic is needed for those paths.
+- Auth is handled entirely via the `AuthModal` component in the header.
