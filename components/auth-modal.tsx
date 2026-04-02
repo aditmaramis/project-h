@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useState } from 'react';
+import { type ReactElement, useState } from 'react';
 import {
 	Dialog,
 	DialogContent,
@@ -14,7 +14,7 @@ import { SignupForm } from '@/components/signup-form';
 
 type AuthModalProps = {
 	mode: 'login' | 'signup';
-	trigger: ReactNode;
+	trigger: ReactElement;
 };
 
 export function AuthModal({ mode, trigger }: AuthModalProps) {
@@ -36,7 +36,7 @@ export function AuthModal({ mode, trigger }: AuthModalProps) {
 			open={open}
 			onOpenChange={handleOpenChange}
 		>
-			<DialogTrigger render={<span />}>{trigger}</DialogTrigger>
+			<DialogTrigger render={trigger} />
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>

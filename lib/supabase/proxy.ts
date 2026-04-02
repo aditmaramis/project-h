@@ -47,5 +47,14 @@ export async function updateSession(request: NextRequest) {
 		return NextResponse.redirect(url);
 	}
 
+	// If authenticated user is on a page with a redirectTo param, send them there
+	const redirectTo = request.nextUrl.searchParams.get('redirectTo');
+	if (user && redirectTo?.startsWith('/')) {
+		const url = request.nextUrl.clone();
+		url.pathname = redirectTo;
+		url.searchParams.delete('redirectTo');
+		return NextResponse.redirect(url);
+	}
+
 	return supabaseResponse;
 }
