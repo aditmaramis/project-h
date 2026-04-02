@@ -11,11 +11,14 @@ This version has breaking changes — APIs, conventions, and file structure may 
 > **Agent-specific workflow instructions** live in `/.instructions/*.md` files.
 > This file defines project-wide standards that all agents MUST follow.
 >
+> **Critical requirement:** Before generating ANY code, you MUST first identify and read every relevant individual instruction file in `/.instructions/` that applies to the task. This is mandatory, not optional. Do not start coding, drafting code, or suggesting code changes until those instruction files have been read.
+>
 > Available instruction files:
 >
 > - `/.instructions/auth-patterns.md` — Supabase-only auth, modal sign-in/sign-up, protected routes
 > - `/.instructions/ui-components.md` — shadcn/ui-only rule, no custom UI components
->   ALWAYS refer to the relevant .md file BEFORE generating any code.
+>
+> If a task touches authentication, read `/.instructions/auth-patterns.md` first. If it touches UI, components, layout, forms, or interactions, read `/.instructions/ui-components.md` first. If multiple instruction files are relevant, read all of them BEFORE generating any code.
 
 ---
 
