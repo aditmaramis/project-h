@@ -129,13 +129,7 @@ export default function HomePage() {
 							Community gifting
 						</Badge>
 
-						<h1
-							className="font-display text-[clamp(3.5rem,10vw,8rem)] leading-[0.95] tracking-tight mb-8"
-							style={{
-								fontFamily: 'var(--font-display)',
-								color: 'var(--hibah-warm-dark)',
-							}}
-						>
+						<h1 className="font-display text-[clamp(3.5rem,10vw,8rem)] leading-[0.95] tracking-tight mb-8 text-hibah-warm-dark">
 							<span className="hero-word hero-word-1 block">Give what</span>
 							<span className="hero-word hero-word-2 block">
 								you{' '}
@@ -222,13 +216,7 @@ export default function HomePage() {
 							>
 								The process
 							</p>
-							<h2
-								className="text-4xl lg:text-5xl leading-tight"
-								style={{
-									fontFamily: 'var(--font-display)',
-									color: 'var(--hibah-warm-dark)',
-								}}
-							>
+							<h2 className="font-display text-4xl lg:text-5xl leading-tight text-hibah-warm-dark">
 								Simple as it
 								<br />
 								ought to be.
@@ -251,13 +239,7 @@ export default function HomePage() {
 									<Card className="h-full border-0 shadow-none rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
 										<CardContent className="p-8 flex flex-col gap-5 h-full">
 											<div className="flex items-start justify-between">
-												<span
-													className="text-6xl font-bold leading-none select-none"
-													style={{
-														fontFamily: 'var(--font-display)',
-														color: 'var(--hibah-terracotta-light)',
-													}}
-												>
+												<span className="font-display text-6xl font-bold leading-none select-none text-hibah-terracotta-light">
 													{step.number}
 												</span>
 												<div
@@ -273,13 +255,7 @@ export default function HomePage() {
 												</div>
 											</div>
 											<div>
-												<h3
-													className="text-xl mb-2"
-													style={{
-														fontFamily: 'var(--font-display)',
-														color: 'var(--hibah-warm-dark)',
-													}}
-												>
+												<h3 className="font-display text-xl mb-2 text-hibah-warm-dark">
 													{step.title}
 												</h3>
 												<p className="text-sm text-muted-foreground leading-relaxed">
@@ -308,13 +284,7 @@ export default function HomePage() {
 						>
 							What you get
 						</p>
-						<h2
-							className="text-4xl lg:text-5xl"
-							style={{
-								fontFamily: 'var(--font-display)',
-								color: 'var(--hibah-warm-dark)',
-							}}
-						>
+						<h2 className="font-display text-4xl lg:text-5xl text-hibah-warm-dark">
 							Built for real people,
 							<br />
 							not engagement metrics.
@@ -341,13 +311,7 @@ export default function HomePage() {
 											/>
 										</div>
 										<div>
-											<h3
-												className="text-base mb-1.5"
-												style={{
-													fontFamily: 'var(--font-display)',
-													color: 'var(--hibah-warm-dark)',
-												}}
-											>
+											<h3 className="font-display text-base mb-1.5 text-hibah-warm-dark">
 												{feature.title}
 											</h3>
 											<p className="text-sm text-muted-foreground leading-relaxed">
@@ -429,11 +393,8 @@ export default function HomePage() {
 								Our mission
 							</p>
 							<h2
-								className="text-4xl lg:text-5xl leading-tight mb-6"
-								style={{
-									fontFamily: 'var(--font-display)',
-									color: 'oklch(0.97 0.01 90)',
-								}}
+								className="font-display text-4xl lg:text-5xl leading-tight mb-6"
+								style={{ color: 'oklch(0.97 0.01 90)' }}
 							>
 								Every unused item is a gift waiting to be given.
 							</h2>
@@ -459,11 +420,8 @@ export default function HomePage() {
 									style={{ background: 'oklch(1 0 0 / 4%)' }}
 								>
 									<span
-										className="text-4xl lg:text-5xl leading-none mb-2"
-										style={{
-											fontFamily: 'var(--font-display)',
-											color: 'oklch(0.97 0.01 90)',
-										}}
+										className="font-display text-4xl lg:text-5xl leading-none mb-2"
+										style={{ color: 'oklch(0.97 0.01 90)' }}
 									>
 										{value}
 									</span>
@@ -493,13 +451,7 @@ export default function HomePage() {
 								/>
 							))}
 						</div>
-						<h2
-							className="text-4xl lg:text-6xl leading-tight mb-6"
-							style={{
-								fontFamily: 'var(--font-display)',
-								color: 'var(--hibah-warm-dark)',
-							}}
-						>
+						<h2 className="font-display text-4xl lg:text-6xl leading-tight mb-6 text-hibah-warm-dark">
 							Ready to give
 							<br />
 							or receive?
