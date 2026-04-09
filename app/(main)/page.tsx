@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { FeaturedCarousel } from '@/components/featured-carousel';
 import {
 	ArrowRight,
 	MapPin,
@@ -86,124 +87,8 @@ const stats = [
 export default function HomePage() {
 	return (
 		<div className="overflow-x-hidden">
-			{/* ── HERO ── */}
-			<section
-				className="relative min-h-[90vh] flex flex-col justify-center"
-				style={{ background: 'var(--hibah-cream)' }}
-			>
-				{/* Decorative background circles */}
-				<div
-					className="pointer-events-none absolute inset-0 overflow-hidden"
-					aria-hidden="true"
-				>
-					<div
-						className="absolute -top-24 -right-24 w-120 h-120 rounded-full opacity-20"
-						style={{
-							background:
-								'radial-gradient(circle, var(--hibah-terracotta), transparent 70%)',
-						}}
-					/>
-					<div
-						className="absolute -bottom-16 -left-16 w-90 h-90 rounded-full opacity-10"
-						style={{
-							background:
-								'radial-gradient(circle, var(--hibah-sage), transparent 70%)',
-						}}
-					/>
-					{/* subtle grid */}
-					<div
-						className="absolute inset-0 opacity-[0.03]"
-						style={{
-							backgroundImage:
-								'repeating-linear-gradient(0deg, transparent, transparent 60px, oklch(0.18 0.03 55) 60px, oklch(0.18 0.03 55) 61px), repeating-linear-gradient(90deg, transparent, transparent 60px, oklch(0.18 0.03 55) 60px, oklch(0.18 0.03 55) 61px)',
-						}}
-					/>
-				</div>
-
-				<div className="container mx-auto px-6 lg:px-12 relative z-10">
-					<div className="max-w-5xl">
-						<Badge
-							variant="outline"
-							className="hero-sub mb-8 text-sm tracking-widest uppercase px-4 py-1.5 border-hibah-terracotta text-hibah-terracotta"
-						>
-							Community gifting
-						</Badge>
-
-						<h1 className="font-display text-[clamp(3.5rem,10vw,8rem)] leading-[0.95] tracking-tight mb-8 text-hibah-warm-dark">
-							<span className="hero-word hero-word-1 block">Give what</span>
-							<span className="hero-word hero-word-2 block">
-								you{' '}
-								<em
-									className="not-italic"
-									style={{ color: 'var(--hibah-terracotta)' }}
-								>
-									have.
-								</em>
-							</span>
-							<span className="hero-word hero-word-3 block">Take what</span>
-							<span className="hero-word hero-word-4 block">
-								you{' '}
-								<em
-									className="not-italic"
-									style={{ color: 'var(--hibah-sage)' }}
-								>
-									need.
-								</em>
-							</span>
-						</h1>
-
-						<div
-							className="reveal-line h-px w-24 mb-8"
-							style={{ background: 'var(--hibah-terracotta)' }}
-						/>
-
-						<p
-							className="hero-sub text-lg lg:text-xl max-w-xl leading-relaxed mb-10"
-							style={{ color: 'oklch(0.40 0.02 55)' }}
-						>
-							Hibah connects neighbors who want to donate unused items with
-							people who need them. No transactions — just generosity passed
-							person to person.
-						</p>
-
-						<div className="hero-cta flex flex-wrap gap-4">
-							<Link
-								href="/items"
-								className="inline-flex items-center justify-center gap-2 rounded-lg px-8 h-9 text-sm font-medium whitespace-nowrap transition-all"
-								style={{
-									background: 'var(--hibah-terracotta)',
-									color: 'white',
-								}}
-							>
-								Browse items <ArrowRight className="h-4 w-4" />
-							</Link>
-							<Link
-								href="/dashboard/items/new"
-								className="inline-flex items-center justify-center gap-2 rounded-lg px-8 h-9 text-sm font-medium whitespace-nowrap border-2 transition-all hover:opacity-80"
-								style={{
-									borderColor: 'var(--hibah-warm-dark)',
-									color: 'var(--hibah-warm-dark)',
-								}}
-							>
-								Post an item
-							</Link>
-						</div>
-					</div>
-				</div>
-
-				{/* floating accent tag */}
-				<div
-					className="float-element pointer-events-none absolute bottom-24 right-12 hidden lg:flex flex-col items-end gap-2"
-					aria-hidden="true"
-				>
-					<div
-						className="text-right text-xs tracking-widest uppercase opacity-40"
-						style={{ color: 'var(--hibah-warm-dark)' }}
-					>
-						No ads · No fees · No algorithms
-					</div>
-				</div>
-			</section>
+			{/* ── FEATURED CAROUSEL ── */}
+			<FeaturedCarousel />
 
 			{/* ── HOW IT WORKS ── */}
 			<section className="py-28 bg-background">
