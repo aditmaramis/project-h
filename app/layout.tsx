@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
+import { TopBar } from '@/components/layout/top-bar';
 import { Header } from '@/components/layout/header';
 import './globals.css';
 
@@ -29,7 +30,7 @@ export default function RootLayout({
 			lang="en"
 			className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
 		>
-			<head>
+			<head suppressHydrationWarning>
 				<link
 					rel="preconnect"
 					href="https://fonts.bunny.net"
@@ -41,6 +42,7 @@ export default function RootLayout({
 				/>
 			</head>
 			<body className="min-h-full flex flex-col">
+				<TopBar />
 				<Header />
 				{children}
 			</body>
