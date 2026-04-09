@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,6 +12,7 @@ import { signupSchema } from '@/lib/validators/auth';
 export function SignupForm({ onSuccess }: { onSuccess?: () => void }) {
 	const supabase = useSupabase();
 	const router = useRouter();
+	const t = useTranslations('Auth');
 	const [name, setName] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
@@ -28,7 +30,7 @@ export function SignupForm({ onSuccess }: { onSuccess?: () => void }) {
 				fieldErrors.name?.[0] ??
 					fieldErrors.email?.[0] ??
 					fieldErrors.password?.[0] ??
-					'Invalid input',
+					t('invalidInput'),
 			);
 			return;
 		}
@@ -58,11 +60,11 @@ export function SignupForm({ onSuccess }: { onSuccess?: () => void }) {
 			className="grid gap-4"
 		>
 			<div className="grid gap-2">
-				<Label htmlFor="signup-name">Name</Label>
+				<Label htmlFor="signup-name">{t('name')}</Label>
 				<Input
 					id="signup-name"
 					type="text"
-					placeholder="Your name"
+					placeholder={t('namePlaceholder')}
 					value={name}
 					onChange={(e) => setName(e.target.value)}
 					autoComplete="name"
@@ -70,11 +72,11 @@ export function SignupForm({ onSuccess }: { onSuccess?: () => void }) {
 				/>
 			</div>
 			<div className="grid gap-2">
-				<Label htmlFor="signup-email">Email</Label>
+				<Label htmlFor="signup-email">{t('email')}</Label>
 				<Input
 					id="signup-email"
 					type="email"
-					placeholder="you@example.com"
+					placeholder={t('emailPlaceholder')}
 					value={email}
 					onChange={(e) => setEmail(e.target.value)}
 					autoComplete="email"
@@ -82,11 +84,11 @@ export function SignupForm({ onSuccess }: { onSuccess?: () => void }) {
 				/>
 			</div>
 			<div className="grid gap-2">
-				<Label htmlFor="signup-password">Password</Label>
+				<Label htmlFor="signup-password">{t('password')}</Label>
 				<Input
 					id="signup-password"
 					type="password"
-					placeholder="At least 6 characters"
+					placeholder={t('passwordPlaceholder')}
 					value={password}
 					onChange={(e) => setPassword(e.target.value)}
 					autoComplete="new-password"
@@ -98,7 +100,7 @@ export function SignupForm({ onSuccess }: { onSuccess?: () => void }) {
 				type="submit"
 				disabled={loading}
 			>
-				{loading ? 'Creating account…' : 'Sign up'}
+				{loading ? t('creatingAccount') : t('signup')}
 			</Button>
 		</form>
 	);

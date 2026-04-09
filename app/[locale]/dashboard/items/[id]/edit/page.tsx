@@ -1,5 +1,5 @@
 export default async function EditItemPage(
-	props: PageProps<'/dashboard/items/[id]/edit'>,
+	props: PageProps<'/[locale]/dashboard/items/[id]/edit'>,
 ) {
 	const { id } = await props.params;
 

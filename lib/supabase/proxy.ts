@@ -1,10 +1,11 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
-export async function updateSession(request: NextRequest) {
-	let supabaseResponse = NextResponse.next({
-		request,
-	});
+export async function updateSession(
+	request: NextRequest,
+	response?: NextResponse,
+) {
+	let supabaseResponse = response ?? NextResponse.next({ request });
 
 	const supabase = createServerClient(
 		process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -18,9 +19,10 @@ export async function updateSession(request: NextRequest) {
 					cookiesToSet.forEach(({ name, value }) =>
 						request.cookies.set(name, value),
 					);
-					supabaseResponse = NextResponse.next({
-						request,
-					});
+					// Only create a fresh NextResponse.next if no response was provided
+					if (!response) {
+						supabaseResponse = NextResponse.next({ request });
+					}
 					cookiesToSet.forEach(({ name, value, options }) =>
 						supabaseResponse.cookies.set(name, value, options),
 					);
@@ -34,16 +36,21 @@ export async function updateSession(request: NextRequest) {
 		data: { user },
 	} = await supabase.auth.getUser();
 
+	// Strip locale prefix (e.g. /id/dashboard → /dashboard) for route matching
+	const pathname = request.nextUrl.pathname;
+	const pathnameWithoutLocale =
+		pathname.replace(/^\/(en|id)(?=\/|$)/, '') || '/';
+
 	// Protected routes: redirect to landing page if not authenticated
 	const protectedPaths = ['/dashboard', '/items/new', '/chat'];
 	const isProtected = protectedPaths.some((path) =>
-		request.nextUrl.pathname.startsWith(path),
+		pathnameWithoutLocale.startsWith(path),
 	);
 
 	if (isProtected && !user) {
 		const url = request.nextUrl.clone();
 		url.pathname = '/';
-		url.searchParams.set('redirectTo', request.nextUrl.pathname);
+		url.searchParams.set('redirectTo', pathname);
 		return NextResponse.redirect(url);
 	}
 

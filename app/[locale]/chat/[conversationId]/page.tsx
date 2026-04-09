@@ -1,5 +1,5 @@
 export default async function ConversationPage(
-	props: PageProps<'/chat/[conversationId]'>,
+	props: PageProps<'/[locale]/chat/[conversationId]'>,
 ) {
 	const { conversationId } = await props.params;
 

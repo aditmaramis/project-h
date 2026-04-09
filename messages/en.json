@@ -1,0 +1,57 @@
+{
+	"TopBar": {
+		"about": "About"
+	},
+	"Header": {
+		"brand": "Hibah"
+	},
+	"Search": {
+		"placeholder": "Search items…"
+	},
+	"Categories": {
+		"trigger": "Categories",
+		"electronics": "Electronics",
+		"clothing": "Clothing",
+		"furniture": "Furniture",
+		"books": "Books",
+		"kitchen": "Kitchen",
+		"sports": "Sports",
+		"toys": "Toys",
+		"other": "Other"
+	},
+	"Location": {
+		"unavailable": "Location unavailable",
+		"finding": "Finding location…",
+		"fallback": "Your area"
+	},
+	"Auth": {
+		"login": "Log in",
+		"signup": "Sign up",
+		"logout": "Log out",
+		"loginTitle": "Log in to Hibah",
+		"signupTitle": "Create your Hibah account",
+		"loginDescription": "Welcome back! Sign in to continue.",
+		"signupDescription": "Join Hibah and start giving freely.",
+		"noAccount": "Don't have an account?",
+		"hasAccount": "Already have an account?",
+		"signingIn": "Signing in…",
+		"creatingAccount": "Creating account…",
+		"email": "Email",
+		"emailPlaceholder": "you@example.com",
+		"password": "Password",
+		"passwordPlaceholder": "At least 6 characters",
+		"name": "Name",
+		"namePlaceholder": "Your name",
+		"invalidInput": "Invalid input"
+	},
+	"Footer": {
+		"copyright": "© {year} Hibah — Give freely. Receive gratefully."
+	},
+	"LanguageSwitcher": {
+		"switchTo": "Switch to {language}"
+	},
+	"Metadata": {
+		"title": "Hibah — Give freely. Receive gratefully.",
+		"description": "Hibah connects people who want to donate unused items with those who need them. No transactions — just generosity."
+	}
+}

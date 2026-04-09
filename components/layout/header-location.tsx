@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { MapPin, Loader2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useGeolocation } from '@/hooks/use-geolocation';
 
 export function HeaderLocation() {
 	const { latitude, longitude, loading, error } = useGeolocation();
 	const [locationName, setLocationName] = useState<string | null>(null);
 	const [resolving, setResolving] = useState(false);
+	const t = useTranslations('Location');
 
 	useEffect(() => {
 		if (!latitude || !longitude) return;
@@ -32,18 +34,18 @@ export function HeaderLocation() {
 					addr?.village ||
 					addr?.county ||
 					addr?.state ||
-					'Your area';
+					t('fallback');
 				setLocationName(name);
 			})
 			.catch(() => {
-				setLocationName('Your area');
+				setLocationName(t('fallback'));
 			})
 			.finally(() => {
 				setResolving(false);
 			});
 
 		return () => controller.abort();
-	}, [latitude, longitude]);
+	}, [latitude, longitude, t]);
 
 	const isLoading = loading || resolving;
 
@@ -51,7 +53,7 @@ export function HeaderLocation() {
 		return (
 			<div className="flex items-center gap-1.5 text-sm text-muted-foreground">
 				<MapPin className="h-4 w-4" />
-				<span>Location unavailable</span>
+				<span>{t('unavailable')}</span>
 			</div>
 		);
 	}
@@ -60,7 +62,7 @@ export function HeaderLocation() {
 		return (
 			<div className="flex items-center gap-1.5 text-sm text-muted-foreground">
 				<Loader2 className="h-4 w-4 animate-spin" />
-				<span>Finding location…</span>
+				<span>{t('finding')}</span>
 			</div>
 		);
 	}

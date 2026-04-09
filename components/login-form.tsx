@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,6 +12,7 @@ import { loginSchema } from '@/lib/validators/auth';
 export function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
 	const supabase = useSupabase();
 	const router = useRouter();
+	const t = useTranslations('Auth');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState<string | null>(null);
@@ -25,7 +27,7 @@ export function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
 			setError(
 				parsed.error.flatten().fieldErrors.email?.[0] ??
 					parsed.error.flatten().fieldErrors.password?.[0] ??
-					'Invalid input',
+					t('invalidInput'),
 			);
 			return;
 		}
@@ -52,11 +54,11 @@ export function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
 			className="grid gap-4"
 		>
 			<div className="grid gap-2">
-				<Label htmlFor="login-email">Email</Label>
+				<Label htmlFor="login-email">{t('email')}</Label>
 				<Input
 					id="login-email"
 					type="email"
-					placeholder="you@example.com"
+					placeholder={t('emailPlaceholder')}
 					value={email}
 					onChange={(e) => setEmail(e.target.value)}
 					autoComplete="email"
@@ -64,7 +66,7 @@ export function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
 				/>
 			</div>
 			<div className="grid gap-2">
-				<Label htmlFor="login-password">Password</Label>
+				<Label htmlFor="login-password">{t('password')}</Label>
 				<Input
 					id="login-password"
 					type="password"
@@ -79,7 +81,7 @@ export function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
 				type="submit"
 				disabled={loading}
 			>
-				{loading ? 'Signing in…' : 'Log in'}
+				{loading ? t('signingIn') : t('login')}
 			</Button>
 		</form>
 	);

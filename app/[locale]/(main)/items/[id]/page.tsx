@@ -1,4 +1,6 @@
-export default async function ItemDetailPage(props: PageProps<'/items/[id]'>) {
+export default async function ItemDetailPage(
+	props: PageProps<'/[locale]/items/[id]'>,
+) {
 	const { id } = await props.params;
 
 	return (

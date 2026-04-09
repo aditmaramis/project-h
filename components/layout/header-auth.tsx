@@ -1,7 +1,8 @@
 'use client';
 
 import { startTransition, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { AuthModal } from '@/components/auth-modal';
 import { LogoutButton } from '@/components/logout-button';
@@ -71,6 +72,12 @@ export function HeaderAuth({ initialIsLoggedIn }: HeaderAuthProps) {
 		return <LogoutButton />;
 	}
 
+	return <HeaderAuthButtons />;
+}
+
+function HeaderAuthButtons() {
+	const t = useTranslations('Auth');
+
 	return (
 		<>
 			<AuthModal
@@ -80,13 +87,13 @@ export function HeaderAuth({ initialIsLoggedIn }: HeaderAuthProps) {
 						variant="ghost"
 						size="sm"
 					>
-						Log in
+						{t('login')}
 					</Button>
 				}
 			/>
 			<AuthModal
 				mode="signup"
-				trigger={<Button size="sm">Sign up</Button>}
+				trigger={<Button size="sm">{t('signup')}</Button>}
 			/>
 		</>
 	);

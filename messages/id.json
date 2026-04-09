@@ -1,0 +1,57 @@
+{
+	"TopBar": {
+		"about": "Tentang"
+	},
+	"Header": {
+		"brand": "Hibah"
+	},
+	"Search": {
+		"placeholder": "Cari barang…"
+	},
+	"Categories": {
+		"trigger": "Kategori",
+		"electronics": "Elektronik",
+		"clothing": "Pakaian",
+		"furniture": "Furnitur",
+		"books": "Buku",
+		"kitchen": "Dapur",
+		"sports": "Olahraga",
+		"toys": "Mainan",
+		"other": "Lainnya"
+	},
+	"Location": {
+		"unavailable": "Lokasi tidak tersedia",
+		"finding": "Mencari lokasi…",
+		"fallback": "Daerah Anda"
+	},
+	"Auth": {
+		"login": "Masuk",
+		"signup": "Daftar",
+		"logout": "Keluar",
+		"loginTitle": "Masuk ke Hibah",
+		"signupTitle": "Buat akun Hibah Anda",
+		"loginDescription": "Selamat datang kembali! Masuk untuk melanjutkan.",
+		"signupDescription": "Bergabung dengan Hibah dan mulai berbagi.",
+		"noAccount": "Belum punya akun?",
+		"hasAccount": "Sudah punya akun?",
+		"signingIn": "Sedang masuk…",
+		"creatingAccount": "Membuat akun…",
+		"email": "Email",
+		"emailPlaceholder": "anda@contoh.com",
+		"password": "Kata sandi",
+		"passwordPlaceholder": "Minimal 6 karakter",
+		"name": "Nama",
+		"namePlaceholder": "Nama Anda",
+		"invalidInput": "Input tidak valid"
+	},
+	"Footer": {
+		"copyright": "© {year} Hibah — Memberi dengan ikhlas. Menerima dengan syukur."
+	},
+	"LanguageSwitcher": {
+		"switchTo": "Ganti ke {language}"
+	},
+	"Metadata": {
+		"title": "Hibah — Memberi dengan ikhlas. Menerima dengan syukur.",
+		"description": "Hibah menghubungkan orang yang ingin mendonasikan barang tak terpakai dengan mereka yang membutuhkan. Tanpa transaksi — hanya kebaikan."
+	}
+}

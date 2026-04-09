@@ -1,6 +1,7 @@
 'use client';
 
 import { type ReactElement, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import {
 	Dialog,
 	DialogContent,
@@ -20,13 +21,13 @@ type AuthModalProps = {
 export function AuthModal({ mode, trigger }: AuthModalProps) {
 	const [open, setOpen] = useState(false);
 	const [activeMode, setActiveMode] = useState<'login' | 'signup'>(mode);
+	const t = useTranslations('Auth');
 
 	const isLogin = activeMode === 'login';
 
 	function handleOpenChange(nextOpen: boolean) {
 		setOpen(nextOpen);
 		if (!nextOpen) {
-			// Reset to initial mode when closed
 			setActiveMode(mode);
 		}
 	}
@@ -40,12 +41,10 @@ export function AuthModal({ mode, trigger }: AuthModalProps) {
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>
-						{isLogin ? 'Log in to Hibah' : 'Create your Hibah account'}
+						{isLogin ? t('loginTitle') : t('signupTitle')}
 					</DialogTitle>
 					<DialogDescription>
-						{isLogin
-							? 'Welcome back! Sign in to continue.'
-							: 'Join Hibah and start giving freely.'}
+						{isLogin ? t('loginDescription') : t('signupDescription')}
 					</DialogDescription>
 				</DialogHeader>
 				{isLogin ? (
@@ -54,13 +53,13 @@ export function AuthModal({ mode, trigger }: AuthModalProps) {
 					<SignupForm onSuccess={() => setOpen(false)} />
 				)}
 				<p className="text-center text-sm text-muted-foreground">
-					{isLogin ? "Don't have an account? " : 'Already have an account? '}
+					{isLogin ? t('noAccount') + ' ' : t('hasAccount') + ' '}
 					<button
 						type="button"
 						className="font-medium text-foreground underline underline-offset-4 hover:text-primary"
 						onClick={() => setActiveMode(isLogin ? 'signup' : 'login')}
 					>
-						{isLogin ? 'Sign up' : 'Log in'}
+						{isLogin ? t('signup') : t('login')}
 					</button>
 				</p>
 			</DialogContent>

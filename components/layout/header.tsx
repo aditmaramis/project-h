@@ -1,5 +1,6 @@
-import Link from 'next/link';
 import { Gift } from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
+import { Link } from '@/i18n/navigation';
 import { HeaderAuth } from '@/components/layout/header-auth';
 import { HeaderCategories } from '@/components/layout/header-categories';
 import { HeaderSearch } from '@/components/layout/header-search';
@@ -10,6 +11,7 @@ export async function Header() {
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();
+	const t = await getTranslations('Header');
 
 	return (
 		<header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
@@ -19,7 +21,7 @@ export async function Header() {
 					className="flex shrink-0 items-center gap-2 font-bold text-xl"
 				>
 					<Gift className="h-5 w-5" />
-					Hibah
+					{t('brand')}
 				</Link>
 				<HeaderCategories />
 				<div className="flex flex-1 justify-center">
