@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { Gift } from 'lucide-react';
 import { HeaderAuth } from '@/components/layout/header-auth';
+import { HeaderCategories } from '@/components/layout/header-categories';
+import { HeaderSearch } from '@/components/layout/header-search';
 import { createClient } from '@/lib/supabase/server';
 
 export async function Header() {
@@ -11,15 +13,19 @@ export async function Header() {
 
 	return (
 		<header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
-			<div className="container mx-auto flex h-16 items-center justify-between px-4">
+			<div className="container mx-auto flex h-12 items-center gap-4 px-4">
 				<Link
 					href="/"
-					className="flex items-center gap-2 font-bold text-xl"
+					className="flex shrink-0 items-center gap-2 font-bold text-xl"
 				>
-					<Gift className="h-6 w-6" />
+					<Gift className="h-5 w-5" />
 					Hibah
 				</Link>
-				<nav className="flex items-center gap-2">
+				<HeaderCategories />
+				<div className="flex flex-1 justify-center">
+					<HeaderSearch />
+				</div>
+				<nav className="flex shrink-0 items-center gap-2">
 					<HeaderAuth initialIsLoggedIn={!!user} />
 				</nav>
 			</div>

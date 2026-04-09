@@ -13,20 +13,28 @@ interface GeolocationState {
  * Hook to get the user's current geolocation via the browser Geolocation API.
  */
 export function useGeolocation() {
-	const [state, setState] = useState<GeolocationState>(() => ({
+	const [state, setState] = useState<GeolocationState>({
 		latitude: null,
 		longitude: null,
-		error: !navigator.geolocation
-			? 'Geolocation is not supported by your browser'
-			: null,
-		loading: !!navigator.geolocation,
-	}));
+		error: null,
+		loading: true,
+	});
 
 	const didRun = useRef(false);
 
 	useEffect(() => {
-		if (didRun.current || !navigator.geolocation) return;
+		if (didRun.current) return;
 		didRun.current = true;
+
+		if (!navigator.geolocation) {
+			setState({
+				latitude: null,
+				longitude: null,
+				error: 'Geolocation is not supported by your browser',
+				loading: false,
+			});
+			return;
+		}
 
 		navigator.geolocation.getCurrentPosition(
 			(position) => {
