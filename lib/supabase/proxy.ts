@@ -42,7 +42,7 @@ export async function updateSession(
 		pathname.replace(/^\/(en|id)(?=\/|$)/, '') || '/';
 
 	// Protected routes: redirect to landing page if not authenticated
-	const protectedPaths = ['/dashboard', '/items/new', '/chat'];
+	const protectedPaths = ['/dashboard', '/items/new', '/chat', '/admin'];
 	const isProtected = protectedPaths.some((path) =>
 		pathnameWithoutLocale.startsWith(path),
 	);

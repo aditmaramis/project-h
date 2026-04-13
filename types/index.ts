@@ -7,6 +7,13 @@ import type {
 	ConversationParticipant,
 	ItemCondition,
 	ItemStatus,
+	UserRole,
+	Report,
+	ReportStatus,
+	ReportTargetType,
+	AdminAction,
+	AdminActionType,
+	BannedKeyword,
 } from '@/lib/generated/prisma/client';
 
 // Re-export Prisma types for convenience
@@ -19,6 +26,13 @@ export type {
 	ConversationParticipant,
 	ItemCondition,
 	ItemStatus,
+	UserRole,
+	Report,
+	ReportStatus,
+	ReportTargetType,
+	AdminAction,
+	AdminActionType,
+	BannedKeyword,
 };
 
 // Composite types for API responses
@@ -37,4 +51,29 @@ export type ConversationWithRelations = Conversation & {
 
 export type MessageWithSender = Message & {
 	sender: Pick<Profile, 'id' | 'name' | 'avatarUrl'>;
+};
+
+// Admin composite types
+export type ReportWithRelations = Report & {
+	reporter: Pick<Profile, 'id' | 'name' | 'email' | 'avatarUrl'>;
+	resolvedBy?: Pick<Profile, 'id' | 'name'> | null;
+};
+
+export type AdminActionWithAdmin = AdminAction & {
+	admin: Pick<Profile, 'id' | 'name' | 'avatarUrl'>;
+};
+
+export type AdminStats = {
+	totalUsers: number;
+	newUsersToday: number;
+	newUsersThisWeek: number;
+	newUsersThisMonth: number;
+	totalItems: number;
+	newItemsToday: number;
+	newItemsThisWeek: number;
+	newItemsThisMonth: number;
+	itemsByStatus: { status: string; count: number }[];
+	totalConversations: number;
+	pendingReports: number;
+	recentActionsCount: number;
 };

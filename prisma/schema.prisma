@@ -9,6 +9,11 @@ datasource db {
 
 // ─── Enums ──────────────────────────────────────────────
 
+enum UserRole {
+  USER
+  ADMIN
+}
+
 enum ItemCondition {
   NEW
   LIKE_NEW
@@ -22,6 +27,29 @@ enum ItemStatus {
   DONATED
 }
 
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  DISMISSED
+}
+
+enum ReportTargetType {
+  ITEM
+  PROFILE
+}
+
+enum AdminActionType {
+  BAN_USER
+  UNBAN_USER
+  WARN_USER
+  DELETE_ITEM
+  EDIT_ITEM
+  RESOLVE_REPORT
+  DISMISS_REPORT
+  ADD_KEYWORD
+  REMOVE_KEYWORD
+}
+
 // ─── Models ─────────────────────────────────────────────
 
 /// Synced from Supabase auth.users via a Postgres trigger.
@@ -32,6 +60,13 @@ model Profile {
   name      String?
   avatarUrl String?
   bio       String?
+  role      UserRole @default(USER)
+
+  // Ban / moderation fields
+  isBanned     Boolean   @default(false)
+  bannedAt     DateTime?
+  bannedReason String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -39,6 +74,13 @@ model Profile {
   messages      Message[]
   conversations ConversationParticipant[]
 
+  // Admin relations
+  reportsSubmitted Report[]      @relation("ReportReporter")
+  reportsResolved  Report[]      @relation("ReportResolver")
+  adminActions     AdminAction[]
+  addedKeywords    BannedKeyword[]
+
+  @@index([role])
   @@map("profiles")
 }
 
@@ -131,4 +173,66 @@ model Message {
   @@index([conversationId, createdAt])
   @@index([senderId])
   @@map("messages")
+}
+
+// ─── Admin Models ───────────────────────────────────────
+
+model Report {
+  id String @id @default(cuid())
+
+  reporterId String  @db.Uuid
+  reporter   Profile @relation("ReportReporter", fields: [reporterId], references: [id])
+
+  targetType ReportTargetType
+  targetId   String
+  reason     String
+  description String?
+
+  status    ReportStatus @default(PENDING)
+  adminNote String?
+
+  resolvedById String?   @db.Uuid
+  resolvedBy   Profile?  @relation("ReportResolver", fields: [resolvedById], references: [id])
+  resolvedAt   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([targetType, targetId])
+  @@index([reporterId])
+  @@map("reports")
+}
+
+model AdminAction {
+  id String @id @default(cuid())
+
+  adminId String  @db.Uuid
+  admin   Profile @relation(fields: [adminId], references: [id])
+
+  actionType AdminActionType
+  targetType String
+  targetId   String
+  details    String? // JSON-serialized context
+
+  createdAt DateTime @default(now())
+
+  @@index([adminId])
+  @@index([targetType, targetId])
+  @@map("admin_actions")
+}
+
+model BannedKeyword {
+  id String @id @default(cuid())
+
+  keyword  String  @unique
+  isActive Boolean @default(true)
+
+  addedById String  @db.Uuid
+  addedBy   Profile @relation(fields: [addedById], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([keyword])
+  @@map("banned_keywords")
 }

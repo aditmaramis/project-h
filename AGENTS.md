@@ -18,8 +18,9 @@ This version has breaking changes — APIs, conventions, and file structure may 
 > - `/.instructions/auth-patterns.md` — Supabase-only auth, modal sign-in/sign-up, protected routes
 > - `/.instructions/ui-components.md` — shadcn/ui-only rule, no custom UI components
 > - `/.instructions/i18n-patterns.md` — Internationalization with next-intl, translation keys, locale routing
+> - `/.instructions/database-patterns.md` — Prisma + PostgreSQL column naming, raw SQL, migration strategy, seeding
 >
-> If a task touches authentication, read `/.instructions/auth-patterns.md` first. If it touches UI, components, layout, forms, or interactions, read `/.instructions/ui-components.md` first. If it touches translations, locales, or internationalization, read `/.instructions/i18n-patterns.md` first. If multiple instruction files are relevant, read all of them BEFORE generating any code.
+> If a task touches authentication, read `/.instructions/auth-patterns.md` first. If it touches UI, components, layout, forms, or interactions, read `/.instructions/ui-components.md` first. If it touches translations, locales, or internationalization, read `/.instructions/i18n-patterns.md` first. If it touches database queries, Prisma schema, migrations, raw SQL, or seeding, read `/.instructions/database-patterns.md` first. If multiple instruction files are relevant, read all of them BEFORE generating any code.
 
 ---
 
@@ -64,6 +65,7 @@ app/                   → Root layout (pass-through) + globals.css
     (main)/            → Public content with header/footer layout
     chat/              → Messaging UI
     dashboard/         → Authenticated user dashboard
+    admin/             → Admin dashboard (ADMIN role required)
   api/                 → Route handlers (REST API) — NOT under [locale]
   auth/                → Supabase OAuth callback — NOT under [locale]
 
@@ -71,6 +73,7 @@ components/            → Reusable React components
   ui/                  → shadcn/ui primitives (Button, etc.)
   layout/              → Header, Footer, TopBar, LanguageSwitcher
   map/                 → Leaflet map components (client-only, dynamic imports)
+  admin/               → Admin dashboard components (sidebar, charts)
 
 hooks/                 → Custom React hooks (all 'use client')
 i18n/                  → Internationalization config
@@ -181,7 +184,7 @@ if (!user) {
 
 ### Protected routes (proxy.ts)
 
-The proxy composes `next-intl` i18n middleware with Supabase session management. It protects: `/dashboard`, `/chat`, and item creation routes (with locale prefix stripping for route matching). Logged-in users are redirected away from `/login` and `/signup`.
+The proxy composes `next-intl` i18n middleware with Supabase session management. It protects: `/dashboard`, `/chat`, `/admin`, and item creation routes (with locale prefix stripping for route matching). The `/admin` layout additionally checks `profile.role === 'ADMIN'` via Prisma and redirects non-admins to `/`.
 
 ---
 
@@ -219,15 +222,24 @@ if (!parsed.success) {
 - Use the singleton from `@/lib/prisma` — **never** instantiate `PrismaClient` directly.
 - Prisma generates to `lib/generated/prisma/` — run `npx prisma generate` after schema changes.
 - Use `@prisma/adapter-pg` for connection pooling.
-- Env vars: `DATABASE_URL` (pooled), `DIRECT_URL` (direct, migrations only).
+- Env vars: `DATABASE_URL` (pooled, port 6543), `DIRECT_URL` (direct, port 5432).
+- **Use `prisma db push`** to sync schema — `prisma migrate dev` fails on Supabase (shadow DB incompatible with `auth` schema).
+- SQL triggers/functions in `prisma/migrations/` must be applied **manually** (via Supabase SQL Editor or `pg` client) — `db push` does not run them.
+
+### Column naming (CRITICAL)
+
+Prisma fields use **camelCase without `@map`**, so PostgreSQL columns are **camelCase** (e.g., `"createdAt"`, `"avatarUrl"`, `"categoryId"`). Table names use `@@map` and are **snake_case** (e.g., `profiles`, `admin_actions`). In raw SQL, always **double-quote camelCase columns**: `"createdAt"`, not `created_at`.
+
+See `/.instructions/database-patterns.md` for full reference.
 
 ### Prisma schema conventions
 
 - UUIDs for `Profile` (synced from Supabase `auth.users`).
 - CUIDs for all other model IDs (`@default(cuid())`).
-- Enums: `ItemCondition` (NEW, LIKE_NEW, GOOD, FAIR), `ItemStatus` (AVAILABLE, RESERVED, DONATED).
+- Enums: `UserRole`, `ItemCondition`, `ItemStatus`, `ReportStatus`, `ReportTargetType`, `AdminActionType`.
 - Always include `createdAt` / `updatedAt` timestamps.
 - Use `@@index` for frequently queried fields.
+- Use `@@map("snake_case")` on every model for table names.
 
 ---
 
@@ -339,7 +351,7 @@ npm run dev          # Start dev server
 npm run build        # Generate Prisma + build
 npm run db:migrate   # Run Prisma migrations
 npm run db:push      # Push schema to DB (no migration)
-npm run db:seed      # Seed categories
+npm run db:seed      # Seed categories + promote ADMIN_EMAIL
 npm run db:studio    # Open Prisma Studio
 ```
 
@@ -349,12 +361,13 @@ npm run db:studio    # Open Prisma Studio
 
 ### Required
 
-| Variable                        | Scope  | Purpose                               |
-| ------------------------------- | ------ | ------------------------------------- |
-| `NEXT_PUBLIC_SUPABASE_URL`      | Public | Supabase project URL                  |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Public | Supabase anonymous key                |
-| `DATABASE_URL`                  | Server | Prisma pooled connection              |
-| `DIRECT_URL`                    | Server | Prisma direct connection (migrations) |
+| Variable                        | Scope  | Purpose                              |
+| ------------------------------- | ------ | ------------------------------------ |
+| `NEXT_PUBLIC_SUPABASE_URL`      | Public | Supabase project URL                 |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Public | Supabase anonymous key               |
+| `DATABASE_URL`                  | Server | Prisma pooled connection (port 6543) |
+| `DIRECT_URL`                    | Server | Prisma direct connection (port 5432) |
+| `ADMIN_EMAIL`                   | Server | Email to promote to ADMIN on seed    |
 
 Never hardcode secrets. Never commit `.env` files.
 
@@ -376,3 +389,7 @@ Never hardcode secrets. Never commit `.env` files.
 - Hardcode user-facing strings — use translation keys from `messages/*.json`
 - Add translation keys to only one locale file — always update both `en.json` and `id.json`
 - Place page routes outside `app/[locale]/` (except `api/` and `auth/callback`)
+- Use snake_case column names in raw SQL — columns are camelCase (e.g., `"createdAt"` not `created_at`)
+- Use `prisma migrate dev` on Supabase — use `prisma db push` instead
+- Forget to apply trigger/function SQL after `prisma db push` — it only syncs schema, not migration SQL files
+- Assume all `auth.users` have a `profiles` row — verify the trigger exists and backfill if needed

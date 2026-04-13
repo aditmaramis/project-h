@@ -28,6 +28,22 @@ async function main() {
 	}
 
 	console.log(`Seeded ${categories.length} categories.`);
+
+	// Promote a user to ADMIN if ADMIN_EMAIL is set
+	const adminEmail = process.env.ADMIN_EMAIL;
+	if (adminEmail) {
+		const result = await prisma.profile.updateMany({
+			where: { email: adminEmail },
+			data: { role: 'ADMIN' },
+		});
+		if (result.count > 0) {
+			console.log(`Promoted ${adminEmail} to ADMIN.`);
+		} else {
+			console.log(
+				`No profile found for ${adminEmail}. Sign up first, then re-run seed.`,
+			);
+		}
+	}
 }
 
 main()

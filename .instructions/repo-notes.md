@@ -24,7 +24,17 @@
 - PrismaClient constructor requires `adapter` or `accelerateUrl`
 - We use `@prisma/adapter-pg` with `PrismaPg({ connectionString })`
 - Generated client output: `lib/generated/prisma/client` (import from `/client`)
-- Seed script uses `npx tsx prisma/seed.ts`
+- Seed config lives in `prisma.config.ts` under `migrations.seed` — NOT in `package.json`
+- Seed command: `npx tsx prisma/seed.ts`
+- **Use `prisma db push`** — `prisma migrate dev` fails on Supabase (shadow DB can't have `auth` schema)
+- SQL triggers in `prisma/migrations/` must be applied manually after `db push`
+
+## Column Naming (CRITICAL)
+
+- Prisma fields are camelCase WITHOUT `@map` → PostgreSQL columns are camelCase
+- Table names use `@@map("snake_case")` → PostgreSQL tables are snake_case
+- In raw SQL: `"createdAt"` (double-quoted), NOT `created_at`
+- In raw SQL: `profiles` (unquoted table), `"avatarUrl"` (quoted column)
 
 ## Project Structure
 
@@ -32,8 +42,9 @@
 - `lib/supabase/` — client.ts, server.ts, proxy.ts (helper)
 - `lib/prisma.ts` — singleton PrismaClient
 - `lib/validators/` — Zod schemas (auth, items, messages)
-- `prisma/schema.prisma` — Profile, Category, Item, Conversation, ConversationParticipant, Message
-- `prisma/migrations/00000000000000_profile_trigger/` — auto-creates Profile on auth.users insert
+- `prisma/schema.prisma` — Profile, Category, Item, Conversation, ConversationParticipant, Message, Report, AdminAction, BannedKeyword
+- `prisma/migrations/00000000000000_profile_trigger/` — auto-creates Profile on auth.users insert (must be applied manually)
+- Enums: UserRole, ItemCondition, ItemStatus, ReportStatus, ReportTargetType, AdminActionType
 - `hooks/` — use-supabase, use-realtime, use-geolocation
 - `types/index.ts` — re-exports Prisma types + composite API types
 
@@ -48,6 +59,8 @@
 - `/dashboard/items/[id]/edit` — Edit item (protected)
 - `/chat` — Conversation list (protected)
 - `/chat/[conversationId]` — Chat thread (protected)
+- `/admin` — Admin dashboard (protected, ADMIN role required)
+- `/admin` layout checks `profile.role === 'ADMIN'` via Prisma; non-admins redirected to `/`
 - `/api/items`, `/api/chat`, `/api/profile` — API routes
 - `/auth/callback` — Supabase auth code exchange
 
