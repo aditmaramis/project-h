@@ -14,7 +14,7 @@ export async function Header() {
 	const t = await getTranslations('Header');
 
 	return (
-		<header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+		<header className="sticky top-9 z-40 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
 			<div className="container mx-auto flex h-12 items-center gap-4 px-4">
 				<Link
 					href="/"

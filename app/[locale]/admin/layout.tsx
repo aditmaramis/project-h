@@ -47,7 +47,7 @@ export default async function AdminLayout({ children, params }: Props) {
 	}
 
 	return (
-		<SidebarProvider>
+		<SidebarProvider className="min-h-0! flex-1 **:data-[slot=sidebar-container]:top-21! **:data-[slot=sidebar-container]:h-[calc(100svh-5.25rem)]!">
 			<AdminSidebar />
 			<SidebarInset>{children}</SidebarInset>
 		</SidebarProvider>
