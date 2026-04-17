@@ -15,7 +15,7 @@ export async function Header() {
 
 	return (
 		<header className="sticky top-9 z-40 w-full border-b bg-background">
-			<div className="container mx-auto flex h-12 items-center gap-4 px-4">
+			<div className="container mx-auto flex h-14 items-center gap-4 px-4">
 				<Link
 					href="/"
 					className="flex shrink-0 items-center gap-2 font-bold text-xl"

@@ -22,7 +22,7 @@ export function HeaderSearch() {
 	return (
 		<form
 			onSubmit={handleSubmit}
-			className="relative w-full max-w-sm"
+			className="relative w-full"
 		>
 			<Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 			<Input
@@ -30,7 +30,7 @@ export function HeaderSearch() {
 				placeholder={t('placeholder')}
 				value={query}
 				onChange={(e) => setQuery(e.target.value)}
-				className="h-8 pl-8 text-sm"
+				className="h-10 pl-8 text-sm"
 			/>
 		</form>
 	);
