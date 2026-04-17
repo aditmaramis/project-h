@@ -32,7 +32,7 @@ export default async function AdminLayout({ children, params }: Props) {
 	} = await supabase.auth.getUser();
 
 	if (!user) {
-		redirect({ pathname: '/', locale });
+		redirect({ href: '/', locale });
 		return null;
 	}
 
@@ -42,7 +42,7 @@ export default async function AdminLayout({ children, params }: Props) {
 	});
 
 	if (!profile || profile.role !== 'ADMIN') {
-		redirect({ pathname: '/', locale });
+		redirect({ href: '/', locale });
 		return null;
 	}
 

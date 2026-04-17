@@ -38,6 +38,11 @@ enum ReportTargetType {
   PROFILE
 }
 
+enum AccountType {
+  PERSONAL
+  ORGANIZATION
+}
+
 enum AdminActionType {
   BAN_USER
   UNBAN_USER
@@ -48,6 +53,8 @@ enum AdminActionType {
   DISMISS_REPORT
   ADD_KEYWORD
   REMOVE_KEYWORD
+  VERIFY_ORG
+  REJECT_ORG
 }
 
 // ─── Models ─────────────────────────────────────────────
@@ -62,6 +69,11 @@ model Profile {
   bio       String?
   role      UserRole @default(USER)
 
+  // Account type
+  accountType AccountType @default(PERSONAL)
+  isVerified  Boolean     @default(false)
+  verifiedAt  DateTime?
+
   // Ban / moderation fields
   isBanned     Boolean   @default(false)
   bannedAt     DateTime?
@@ -73,6 +85,7 @@ model Profile {
   items         Item[]
   messages      Message[]
   conversations ConversationParticipant[]
+  favorites     Favorite[]
 
   // Admin relations
   reportsSubmitted Report[]      @relation("ReportReporter")
@@ -81,6 +94,7 @@ model Profile {
   addedKeywords    BannedKeyword[]
 
   @@index([role])
+  @@index([accountType])
   @@map("profiles")
 }
 
@@ -116,6 +130,7 @@ model Item {
   donor   Profile @relation(fields: [donorId], references: [id])
 
   conversations Conversation[]
+  favorites     Favorite[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -173,6 +188,23 @@ model Message {
   @@index([conversationId, createdAt])
   @@index([senderId])
   @@map("messages")
+}
+
+model Favorite {
+  id String @id @default(cuid())
+
+  profileId String  @db.Uuid
+  profile   Profile @relation(fields: [profileId], references: [id])
+
+  itemId String
+  item   Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([profileId, itemId])
+  @@index([profileId])
+  @@index([itemId])
+  @@map("favorites")
 }
 
 // ─── Admin Models ───────────────────────────────────────

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { createClient } from '@/lib/supabase/server';
+import { updateProfileSchema } from '@/lib/validators/profile';
 
 export async function GET() {
 	const supabase = await createClient();
@@ -34,15 +35,18 @@ export async function PATCH(request: Request) {
 	}
 
 	const body = await request.json();
-	const { name, bio, avatarUrl } = body;
+	const parsed = updateProfileSchema.safeParse(body);
+
+	if (!parsed.success) {
+		return NextResponse.json(
+			{ error: parsed.error.flatten() },
+			{ status: 400 },
+		);
+	}
 
 	const profile = await prisma.profile.update({
 		where: { id: user.id },
-		data: {
-			...(name !== undefined && { name }),
-			...(bio !== undefined && { bio }),
-			...(avatarUrl !== undefined && { avatarUrl }),
-		},
+		data: parsed.data,
 	});
 
 	return NextResponse.json(profile);

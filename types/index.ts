@@ -5,9 +5,11 @@ import type {
 	Conversation,
 	Message,
 	ConversationParticipant,
+	Favorite,
 	ItemCondition,
 	ItemStatus,
 	UserRole,
+	AccountType,
 	Report,
 	ReportStatus,
 	ReportTargetType,
@@ -24,9 +26,11 @@ export type {
 	Conversation,
 	Message,
 	ConversationParticipant,
+	Favorite,
 	ItemCondition,
 	ItemStatus,
 	UserRole,
+	AccountType,
 	Report,
 	ReportStatus,
 	ReportTargetType,
@@ -39,6 +43,10 @@ export type {
 export type ItemWithRelations = Item & {
 	category: Category;
 	donor: Pick<Profile, 'id' | 'name' | 'avatarUrl'>;
+};
+
+export type ItemWithFavorite = ItemWithRelations & {
+	favorites?: Pick<Favorite, 'id'>[];
 };
 
 export type ConversationWithRelations = Conversation & {
@@ -61,6 +69,15 @@ export type ReportWithRelations = Report & {
 
 export type AdminActionWithAdmin = AdminAction & {
 	admin: Pick<Profile, 'id' | 'name' | 'avatarUrl'>;
+};
+
+// Dashboard composite types
+export type DashboardStats = {
+	totalItems: number;
+	activeItems: number;
+	donatedItems: number;
+	activeConversations: number;
+	totalFavorites: number;
 };
 
 export type AdminStats = {
