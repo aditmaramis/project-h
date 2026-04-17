@@ -113,7 +113,7 @@ export function FeaturedCarousel() {
 		<Carousel
 			opts={{ loop: true, align: 'start' }}
 			plugins={[Autoplay({ delay: 5000, stopOnInteraction: true })]}
-			className="w-full"
+			className="w-full overflow-hidden rounded-2xl border border-border shadow-sm"
 		>
 			<CarouselContent className="ml-0">
 				{FEATURED_SLIDES.map((slide) => (
@@ -121,7 +121,7 @@ export function FeaturedCarousel() {
 						key={slide.id}
 						className="pl-0"
 					>
-						<div className="relative h-[70vh] min-h-120 max-h-175 overflow-hidden">
+						<div className="relative h-[60vh] min-h-96 max-h-150 overflow-hidden">
 							{/* Background image */}
 							<div
 								className="absolute inset-0 bg-cover bg-center"
@@ -131,8 +131,8 @@ export function FeaturedCarousel() {
 							{/* Gradient overlay */}
 							<div className="absolute inset-0 bg-linear-to-r from-black/70 via-black/40 to-transparent" />
 
-							{/* Bottom fade for blending into page */}
-							<div className="absolute bottom-0 left-0 right-0 h-24 bg-linear-to-t from-background to-transparent" />
+							{/* Bottom fade */}
+							<div className="absolute bottom-0 left-0 right-0 h-16 bg-linear-to-t from-black/30 to-transparent" />
 
 							{/* Content */}
 							<div className="relative h-full container mx-auto px-6 lg:px-12 flex flex-col justify-center">

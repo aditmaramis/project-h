@@ -10,7 +10,7 @@ export function TopBar() {
 	const t = useTranslations('TopBar');
 
 	return (
-		<div className="sticky top-0 z-50 w-full border-b border-border/50 bg-muted/50 text-sm">
+		<div className="sticky top-0 z-50 w-full bg-muted text-sm">
 			<div className="container mx-auto flex h-9 items-center justify-between px-4">
 				<HeaderLocation />
 				<div className="flex items-center gap-2">

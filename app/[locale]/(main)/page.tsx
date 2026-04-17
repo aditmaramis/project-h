@@ -88,7 +88,9 @@ export default function HomePage() {
 	return (
 		<div className="overflow-x-hidden">
 			{/* ── FEATURED CAROUSEL ── */}
-			<FeaturedCarousel />
+			<div className="container mx-auto px-6 lg:px-12 pt-10">
+				<FeaturedCarousel />
+			</div>
 
 			{/* ── HOW IT WORKS ── */}
 			<section className="py-28 bg-background">
