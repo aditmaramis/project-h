@@ -19,8 +19,9 @@ This version has breaking changes — APIs, conventions, and file structure may 
 > - `/.instructions/ui-components.md` — shadcn/ui-only rule, no custom UI components
 > - `/.instructions/i18n-patterns.md` — Internationalization with next-intl, translation keys, locale routing
 > - `/.instructions/database-patterns.md` — Prisma + PostgreSQL column naming, raw SQL, migration strategy, seeding
+> - `/.instructions/admin-dashboard-plan.md` — Admin dashboard phased implementation plan (Phases 1–5)
 >
-> If a task touches authentication, read `/.instructions/auth-patterns.md` first. If it touches UI, components, layout, forms, or interactions, read `/.instructions/ui-components.md` first. If it touches translations, locales, or internationalization, read `/.instructions/i18n-patterns.md` first. If it touches database queries, Prisma schema, migrations, raw SQL, or seeding, read `/.instructions/database-patterns.md` first. If multiple instruction files are relevant, read all of them BEFORE generating any code.
+> If a task touches authentication, read `/.instructions/auth-patterns.md` first. If it touches UI, components, layout, forms, or interactions, read `/.instructions/ui-components.md` first. If it touches translations, locales, or internationalization, read `/.instructions/i18n-patterns.md` first. If it touches database queries, Prisma schema, migrations, raw SQL, or seeding, read `/.instructions/database-patterns.md` first. If a task touches the admin dashboard or any admin feature, read `/.instructions/admin-dashboard-plan.md` first. If multiple instruction files are relevant, read all of them BEFORE generating any code.
 
 ---
 
