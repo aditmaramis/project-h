@@ -126,6 +126,7 @@ export default async function DashboardPage({ params }: Props) {
 					</h2>
 					<Button
 						render={<Link href="/dashboard/items/new" />}
+						nativeButton={false}
 						size="sm"
 					>
 						<Plus className="mr-1 size-4" />
@@ -164,6 +165,7 @@ export default async function DashboardPage({ params }: Props) {
 								variant="ghost"
 								size="sm"
 								render={<Link href="/dashboard/items" />}
+								nativeButton={false}
 							>
 								{t('viewAll')}
 								<ArrowRight className="ml-1 size-4" />
@@ -179,6 +181,7 @@ export default async function DashboardPage({ params }: Props) {
 									size="sm"
 									variant="outline"
 									render={<Link href="/dashboard/items/new" />}
+									nativeButton={false}
 								>
 									<Plus className="mr-1 size-4" />
 									{t('postItem')}

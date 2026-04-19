@@ -13,7 +13,7 @@ BEGIN
     NEW.email,
     COALESCE(NEW.raw_user_meta_data ->> 'name', NEW.raw_user_meta_data ->> 'full_name'),
     NEW.raw_user_meta_data ->> 'avatar_url',
-    COALESCE(NEW.raw_user_meta_data ->> 'account_type', 'PERSONAL')::"AccountType",
+    COALESCE(NEW.raw_user_meta_data ->> 'account_type', 'PERSONAL')::public."AccountType",
     NOW(),
     NOW()
   );

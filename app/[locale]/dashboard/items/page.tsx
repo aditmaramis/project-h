@@ -63,6 +63,7 @@ export default async function MyItemsPage({ params }: Props) {
 				</div>
 				<Button
 					render={<Link href="/dashboard/items/new" />}
+					nativeButton={false}
 					size="sm"
 				>
 					<Plus className="mr-1.5 size-4" />
@@ -74,7 +75,10 @@ export default async function MyItemsPage({ params }: Props) {
 				{items.length === 0 ? (
 					<div className="flex flex-col items-center justify-center gap-4 py-20">
 						<p className="text-muted-foreground">{t('noItemsYet')}</p>
-						<Button render={<Link href="/dashboard/items/new" />}>
+						<Button
+							render={<Link href="/dashboard/items/new" />}
+							nativeButton={false}
+						>
 							{t('postItem')}
 						</Button>
 					</div>
@@ -139,6 +143,7 @@ export default async function MyItemsPage({ params }: Props) {
 														render={
 															<Link href={`/dashboard/items/${item.id}/edit`} />
 														}
+														nativeButton={false}
 													>
 														<Pencil className="size-4" />
 													</Button>
