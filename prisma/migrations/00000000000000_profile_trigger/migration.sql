@@ -7,12 +7,26 @@ LANGUAGE plpgsql
 SECURITY DEFINER SET search_path = ''
 AS $$
 BEGIN
-  INSERT INTO public.profiles (id, email, name, "avatarUrl", "accountType", "createdAt", "updatedAt")
+  INSERT INTO public.profiles (
+    id,
+    email,
+    name,
+    "avatarUrl",
+    district,
+    region,
+    country,
+    "accountType",
+    "createdAt",
+    "updatedAt"
+  )
   VALUES (
     NEW.id,
     NEW.email,
     COALESCE(NEW.raw_user_meta_data ->> 'name', NEW.raw_user_meta_data ->> 'full_name'),
     NEW.raw_user_meta_data ->> 'avatar_url',
+    NEW.raw_user_meta_data ->> 'location_district',
+    NEW.raw_user_meta_data ->> 'location_region',
+    NEW.raw_user_meta_data ->> 'location_country',
     COALESCE(NEW.raw_user_meta_data ->> 'account_type', 'PERSONAL')::public."AccountType",
     NOW(),
     NOW()

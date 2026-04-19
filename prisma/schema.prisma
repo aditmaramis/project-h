@@ -67,6 +67,9 @@ model Profile {
   name      String?
   avatarUrl String?
   bio       String?
+  district  String?
+  region    String?
+  country   String?
   role      UserRole @default(USER)
 
   // Account type

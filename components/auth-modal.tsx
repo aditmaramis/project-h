@@ -38,7 +38,13 @@ export function AuthModal({ mode, trigger }: AuthModalProps) {
 			onOpenChange={handleOpenChange}
 		>
 			<DialogTrigger render={trigger} />
-			<DialogContent>
+			<DialogContent
+				className={
+					isLogin
+						? 'max-h-[88svh] overflow-y-auto'
+						: 'max-h-[88svh] overflow-y-auto sm:max-w-3xl'
+				}
+			>
 				<DialogHeader>
 					<DialogTitle>
 						{isLogin ? t('loginTitle') : t('signupTitle')}
