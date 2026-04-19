@@ -40,11 +40,8 @@ export function SignupForm({ onSuccess }: { onSuccess?: () => void }) {
 	const router = useRouter();
 	const locale = useLocale();
 	const t = useTranslations('Auth');
-	const {
-		latitude: detectedLatitude,
-		longitude: detectedLongitude,
-		loading: detectingLocation,
-	} = useGeolocation();
+	const { latitude: detectedLatitude, longitude: detectedLongitude } =
+		useGeolocation();
 	const [name, setName] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
@@ -68,8 +65,10 @@ export function SignupForm({ onSuccess }: { onSuccess?: () => void }) {
 		if (detectedLatitude == null || detectedLongitude == null) return;
 
 		const coarse = toCoarseLocation(detectedLatitude, detectedLongitude);
-		setSelectedLocation([coarse.latitude, coarse.longitude]);
-		setDidAutofillLocation(true);
+		queueMicrotask(() => {
+			setSelectedLocation([coarse.latitude, coarse.longitude]);
+			setDidAutofillLocation(true);
+		});
 	}, [detectedLatitude, detectedLongitude, didAutofillLocation]);
 
 	const coarseLocation = useMemo(() => {
@@ -83,7 +82,9 @@ export function SignupForm({ onSuccess }: { onSuccess?: () => void }) {
 
 		const [latitude, longitude] = selectedLocation;
 		const controller = new AbortController();
-		setResolvingLocationLabel(true);
+		queueMicrotask(() => {
+			setResolvingLocationLabel(true);
+		});
 
 		fetch(
 			`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&zoom=10`,
@@ -268,16 +269,9 @@ export function SignupForm({ onSuccess }: { onSuccess?: () => void }) {
 					}}
 				/>
 				<p className="text-xs text-muted-foreground">
-					{detectingLocation && !selectedLocation
-						? t('locationDetecting')
-						: t('locationApproximate', {
-								radiusKm: LOCATION_PRIVACY_RADIUS_KM,
-							})}
+					{t('locationApproximate')}
 				</p>
 				<div className="grid gap-2">
-					<Label htmlFor="signup-district-region-country">
-						{t('locationDistrictRegionCountryLabel')}
-					</Label>
 					<Input
 						id="signup-district-region-country"
 						value={districtRegionCountry}
