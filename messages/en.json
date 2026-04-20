@@ -44,7 +44,7 @@
 		"namePlaceholder": "Your name",
 		"locationLabel": "Location",
 		"locationDetecting": "Detecting your location…",
-		"locationApproximate": "Drag the marker to adjust",
+		"locationApproximate": "Drag the marker to adjust.",
 		"locationDistrictRegionCountryLabel": "District, region, country",
 		"locationDistrictRegionCountryPlaceholder": "Auto-generated from map location",
 		"locationDistrictRegionCountryResolving": "Generating district, region, and country…",
