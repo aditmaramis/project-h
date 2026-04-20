@@ -23,6 +23,7 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { buildProfileHref } from '@/lib/profile-url';
 
 const navItems = [
 	{ key: 'overview', href: '/dashboard', icon: LayoutDashboard },
@@ -33,11 +34,12 @@ const navItems = [
 ] as const;
 
 type Props = {
+	userId: string;
 	userName: string | null;
 	avatarUrl: string | null;
 };
 
-export function DashboardSidebar({ userName, avatarUrl }: Props) {
+export function DashboardSidebar({ userId, userName, avatarUrl }: Props) {
 	const t = useTranslations('Dashboard');
 	const pathname = usePathname();
 
@@ -60,7 +62,7 @@ export function DashboardSidebar({ userName, avatarUrl }: Props) {
 					<SidebarMenuItem>
 						<SidebarMenuButton
 							size="lg"
-							render={<Link href="/dashboard" />}
+							render={<Link href={buildProfileHref(userId, userName)} />}
 						>
 							<Avatar className="size-8">
 								<AvatarImage

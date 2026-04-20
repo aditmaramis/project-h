@@ -27,6 +27,7 @@
 	"Auth": {
 		"login": "Log in",
 		"signup": "Sign up",
+		"profile": "Profile",
 		"logout": "Log out",
 		"loginTitle": "Log in to Hibah",
 		"signupTitle": "Create your Hibah account",
@@ -148,11 +149,26 @@
 		"changeAvatar": "Change image",
 		"saving": "Saving…",
 		"saveChanges": "Save changes",
+		"viewPublicProfile": "View public profile",
 		"profileUpdated": "Profile updated successfully.",
 		"accountType": "Account Type",
 		"personal": "Personal",
 		"organization": "Organization",
 		"verified": "Verified",
 		"unverified": "Pending verification"
+	},
+	"ProfilePage": {
+		"title": "Profile",
+		"anonymous": "Anonymous user",
+		"verified": "Verified",
+		"unverified": "Not verified",
+		"personal": "Personal",
+		"organization": "Organization",
+		"memberSince": "Member since {date}",
+		"noBio": "This user has not added a bio yet.",
+		"availableItems": "Available Items",
+		"totalItems": "{count} total items",
+		"noAvailableItems": "No available items right now.",
+		"viewItem": "View item"
 	}
 }

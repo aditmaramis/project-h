@@ -1,10 +1,12 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
-import { redirect } from '@/i18n/navigation';
+import { Link, redirect } from '@/i18n/navigation';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
 import { ProfileSettingsForm } from '@/components/dashboard/profile-settings-form';
+import { buildProfileHref } from '@/lib/profile-url';
 
 type Props = {
 	params: Promise<{ locale: string }>;
@@ -54,6 +56,17 @@ export default async function SettingsPage({ params }: Props) {
 
 			<div className="flex-1 overflow-auto p-4 md:p-6">
 				<div className="mx-auto max-w-2xl">
+					<div className="mb-4 flex justify-end">
+						<Button
+							asChild
+							variant="outline"
+							size="sm"
+						>
+							<Link href={buildProfileHref(user.id, profile.name)}>
+								{t('viewPublicProfile')}
+							</Link>
+						</Button>
+					</div>
 					<ProfileSettingsForm
 						initialName={profile.name ?? ''}
 						initialBio={profile.bio ?? ''}

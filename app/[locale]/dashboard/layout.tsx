@@ -42,6 +42,7 @@ export default async function DashboardLayout({ children, params }: Props) {
 	return (
 		<SidebarProvider className="min-h-0! flex-1 **:data-[slot=sidebar-container]:top-21! **:data-[slot=sidebar-container]:h-[calc(100svh-5.25rem)]!">
 			<DashboardSidebar
+				userId={user.id}
 				userName={profile?.name ?? null}
 				avatarUrl={profile?.avatarUrl ?? null}
 			/>

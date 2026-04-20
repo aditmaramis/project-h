@@ -27,6 +27,7 @@
 	"Auth": {
 		"login": "Masuk",
 		"signup": "Daftar",
+		"profile": "Profil",
 		"logout": "Keluar",
 		"loginTitle": "Masuk ke Hibah",
 		"signupTitle": "Buat akun Hibah Anda",
@@ -148,11 +149,26 @@
 		"changeAvatar": "Ganti gambar",
 		"saving": "Menyimpan…",
 		"saveChanges": "Simpan perubahan",
+		"viewPublicProfile": "Lihat profil publik",
 		"profileUpdated": "Profil berhasil diperbarui.",
 		"accountType": "Jenis Akun",
 		"personal": "Pribadi",
 		"organization": "Organisasi",
 		"verified": "Terverifikasi",
 		"unverified": "Menunggu verifikasi"
+	},
+	"ProfilePage": {
+		"title": "Profil",
+		"anonymous": "Pengguna anonim",
+		"verified": "Terverifikasi",
+		"unverified": "Belum terverifikasi",
+		"personal": "Pribadi",
+		"organization": "Organisasi",
+		"memberSince": "Bergabung sejak {date}",
+		"noBio": "Pengguna ini belum menambahkan bio.",
+		"availableItems": "Barang Tersedia",
+		"totalItems": "{count} total barang",
+		"noAvailableItems": "Belum ada barang yang tersedia saat ini.",
+		"viewItem": "Lihat barang"
 	}
 }

@@ -4,6 +4,7 @@ import { Link } from '@/i18n/navigation';
 import { HeaderAuth } from '@/components/layout/header-auth';
 import { HeaderCategories } from '@/components/layout/header-categories';
 import { HeaderSearch } from '@/components/layout/header-search';
+import { prisma } from '@/lib/prisma';
 import { createClient } from '@/lib/supabase/server';
 
 export async function Header() {
@@ -11,6 +12,14 @@ export async function Header() {
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();
+
+	const profile = user
+		? await prisma.profile.findUnique({
+				where: { id: user.id },
+				select: { name: true, avatarUrl: true },
+			})
+		: null;
+
 	const t = await getTranslations('Header');
 
 	return (
@@ -28,7 +37,12 @@ export async function Header() {
 					<HeaderSearch />
 				</div>
 				<nav className="flex shrink-0 items-center gap-2">
-					<HeaderAuth initialIsLoggedIn={!!user} />
+					<HeaderAuth
+						initialIsLoggedIn={!!user}
+						initialUserId={user?.id ?? null}
+						initialUserName={profile?.name ?? null}
+						initialAvatarUrl={profile?.avatarUrl ?? null}
+					/>
 				</nav>
 			</div>
 		</header>
