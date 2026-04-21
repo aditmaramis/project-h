@@ -195,11 +195,12 @@ export default async function PublicProfilePage({ params }: Props) {
 											</div>
 										</div>
 										<Button
-											asChild
 											variant="outline"
 											className="w-full"
+											render={<Link href={`/items/${item.id}`} />}
+											nativeButton={false}
 										>
-											<Link href={`/items/${item.id}`}>{t('viewItem')}</Link>
+											{t('viewItem')}
 										</Button>
 									</CardContent>
 								</Card>

@@ -61,7 +61,7 @@ export default async function FavoritesPage({ params }: Props) {
 								key={item.id}
 								className="overflow-hidden"
 							>
-								<div className="relative aspect-[4/3]">
+								<div className="relative aspect-4/3">
 									{item.images[0] ? (
 										<img
 											src={item.images[0]}

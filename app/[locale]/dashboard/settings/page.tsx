@@ -58,13 +58,12 @@ export default async function SettingsPage({ params }: Props) {
 				<div className="mx-auto max-w-2xl">
 					<div className="mb-4 flex justify-end">
 						<Button
-							asChild
 							variant="outline"
 							size="sm"
+							render={<Link href={buildProfileHref(user.id, profile.name)} />}
+							nativeButton={false}
 						>
-							<Link href={buildProfileHref(user.id, profile.name)}>
-								{t('viewPublicProfile')}
-							</Link>
+							{t('viewPublicProfile')}
 						</Button>
 					</div>
 					<ProfileSettingsForm

@@ -86,12 +86,12 @@ export default async function MyItemsPage({ params }: Props) {
 					<Table>
 						<TableHeader>
 							<TableRow>
-								<TableHead className="w-[60px]" />
-								<TableHead>{t('name')}</TableHead>
-								<TableHead>Category</TableHead>
-								<TableHead>Status</TableHead>
+								<TableHead className="w-15" />
+								<TableHead>{t('itemTitle')}</TableHead>
+								<TableHead>{t('category')}</TableHead>
+								<TableHead>{t('status')}</TableHead>
 								<TableHead>{t('postedDate')}</TableHead>
-								<TableHead className="text-right">Actions</TableHead>
+								<TableHead className="text-right">{t('actions')}</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
@@ -127,7 +127,13 @@ export default async function MyItemsPage({ params }: Props) {
 												] ?? 'outline'
 											}
 										>
-											{item.status}
+											{t(
+												item.status === 'AVAILABLE'
+													? 'available'
+													: item.status === 'RESERVED'
+														? 'reserved'
+														: 'donated',
+											)}
 										</Badge>
 									</TableCell>
 									<TableCell className="text-muted-foreground">

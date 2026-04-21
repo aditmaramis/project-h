@@ -90,7 +90,7 @@ export function MarkDonatedButton({
 				<DialogHeader>
 					<DialogTitle>{t('markDonated')}</DialogTitle>
 					<DialogDescription>
-						{t('markDonatedDescription', { title: itemTitle })}
+						{t('markDonatedDescription')} {itemTitle}.
 					</DialogDescription>
 				</DialogHeader>
 
@@ -131,7 +131,7 @@ export function MarkDonatedButton({
 						onClick={handleMarkDonated}
 						disabled={loading}
 					>
-						{loading ? t('saving') : t('confirmDonated')}
+						{loading ? t('saving') : t('markAsDonated')}
 					</Button>
 				</DialogFooter>
 			</DialogContent>

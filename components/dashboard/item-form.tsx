@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ImagePlus, X } from 'lucide-react';
+import { ImagePlus, Loader2, X } from 'lucide-react';
 import { LocationPicker } from '@/components/map';
 import { useSupabase } from '@/hooks/use-supabase';
 import { createItemSchema, updateItemSchema } from '@/lib/validators/items';
@@ -58,56 +58,130 @@ export function ItemForm({ categories, initialData }: Props) {
 	const [uploading, setUploading] = useState(false);
 	const [saving, setSaving] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const [uploadNotice, setUploadNotice] = useState<{
+		variant: 'default' | 'secondary' | 'destructive';
+		message: string;
+	} | null>(null);
+	const maxImageSizeBytes = 500 * 1024;
+	const itemBucket = 'Items';
+
+	function getUploadErrorMessage(
+		rawMessage: string | null | undefined,
+	): string {
+		if (!rawMessage) return t('imageUploadFailed');
+		const normalizedMessage = rawMessage.toLowerCase();
+		if (normalizedMessage.includes('bucket not found')) {
+			return t('missingStorageBucket', { bucket: itemBucket });
+		}
+		if (normalizedMessage.includes('row-level security policy')) {
+			return t('storagePolicyDenied', { bucket: itemBucket });
+		}
+		return rawMessage;
+	}
 
 	async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
 		const files = e.target.files;
 		if (!files || files.length === 0) return;
 		if (images.length + files.length > 5) {
-			setError('Maximum 5 images allowed');
+			const message = t('imageLimitError');
+			setError(message);
+			setUploadNotice({ variant: 'destructive', message });
+			if (fileInputRef.current) fileInputRef.current.value = '';
 			return;
 		}
 
 		setUploading(true);
 		setError(null);
+		setUploadNotice({
+			variant: 'secondary',
+			message: t('uploadingImages', { count: files.length }),
+		});
 
-		const {
-			data: { user },
-		} = await supabase.auth.getUser();
-		if (!user) {
-			setUploading(false);
-			return;
-		}
-
-		const newUrls: string[] = [];
-
-		for (const file of Array.from(files)) {
-			if (!file.type.startsWith('image/')) continue;
-			if (file.size > 5 * 1024 * 1024) continue; // 5MB max per image
-
-			const fileExt = file.name.split('.').pop();
-			const filePath = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
-
-			const { error: uploadError } = await supabase.storage
-				.from('items')
-				.upload(filePath, file);
-
-			if (uploadError) {
-				setError(uploadError.message);
-				continue;
+		try {
+			const {
+				data: { user },
+			} = await supabase.auth.getUser();
+			if (!user) {
+				const message = t('uploadAuthRequired');
+				setError(message);
+				setUploadNotice({ variant: 'destructive', message });
+				return;
 			}
 
-			const {
-				data: { publicUrl },
-			} = supabase.storage.from('items').getPublicUrl(filePath);
+			const newUrls: string[] = [];
+			let uploadedCount = 0;
+			let failedCount = 0;
+			let firstFailureMessage: string | null = null;
 
-			newUrls.push(publicUrl);
+			for (const file of Array.from(files)) {
+				if (!file.type.startsWith('image/')) {
+					failedCount += 1;
+					firstFailureMessage ??= t('invalidImageType');
+					continue;
+				}
+				if (file.size > maxImageSizeBytes) {
+					failedCount += 1;
+					firstFailureMessage ??= t('invalidImageSize');
+					continue;
+				}
+
+				const fileExt = file.name.split('.').pop();
+				const filePath = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
+
+				const { error: uploadError } = await supabase.storage
+					.from(itemBucket)
+					.upload(filePath, file);
+
+				if (uploadError) {
+					failedCount += 1;
+					firstFailureMessage ??= getUploadErrorMessage(uploadError.message);
+					continue;
+				}
+
+				const {
+					data: { publicUrl },
+				} = supabase.storage.from(itemBucket).getPublicUrl(filePath);
+
+				newUrls.push(publicUrl);
+				uploadedCount += 1;
+			}
+
+			if (newUrls.length > 0) {
+				setImages((prev) => [...prev, ...newUrls]);
+			}
+
+			if (failedCount === 0) {
+				setError(null);
+				setUploadNotice({
+					variant: 'default',
+					message: t('imageUploadSuccess', { count: uploadedCount }),
+				});
+				return;
+			}
+
+			if (uploadedCount > 0) {
+				setError(firstFailureMessage ?? t('imageUploadFailed'));
+				setUploadNotice({
+					variant: 'destructive',
+					message: t('imageUploadPartial', {
+						uploaded: uploadedCount,
+						failed: failedCount,
+					}),
+				});
+				return;
+			}
+
+			const message = firstFailureMessage ?? t('imageUploadFailedAll');
+			setError(message);
+			setUploadNotice({ variant: 'destructive', message });
+		} catch {
+			const message = t('imageUploadFailed');
+			setError(message);
+			setUploadNotice({ variant: 'destructive', message });
+		} finally {
+			setUploading(false);
+			if (fileInputRef.current) fileInputRef.current.value = '';
 		}
-
-		setImages((prev) => [...prev, ...newUrls]);
-		setUploading(false);
-
-		// Reset file input
-		if (fileInputRef.current) fileInputRef.current.value = '';
 	}
 
 	function removeImage(index: number) {
@@ -135,7 +209,7 @@ export function ItemForm({ categories, initialData }: Props) {
 		if (!parsed.success) {
 			const fieldErrors = parsed.error.flatten().fieldErrors;
 			const firstError = Object.values(fieldErrors).flat()[0];
-			setError(firstError ?? 'Invalid input');
+			setError(firstError ?? t('invalidInput'));
 			return;
 		}
 
@@ -154,7 +228,7 @@ export function ItemForm({ categories, initialData }: Props) {
 
 		if (!res.ok) {
 			const resData = await res.json();
-			setError(resData.error?.message ?? 'Something went wrong');
+			setError(resData.error?.message ?? t('somethingWentWrong'));
 			return;
 		}
 
@@ -174,53 +248,55 @@ export function ItemForm({ categories, initialData }: Props) {
 				</CardHeader>
 				<CardContent className="grid gap-4">
 					<div className="grid gap-2">
-						<Label htmlFor="item-title">{t('name')}</Label>
+						<Label htmlFor="item-title">{t('itemTitle')}</Label>
 						<Input
 							id="item-title"
 							value={title}
 							onChange={(e) => setTitle(e.target.value)}
-							placeholder="Item title"
+							placeholder={t('itemTitlePlaceholder')}
 							required
 						/>
 					</div>
 					<div className="grid gap-2">
-						<Label htmlFor="item-description">Description</Label>
+						<Label htmlFor="item-description">{t('description')}</Label>
 						<textarea
 							id="item-description"
 							value={description}
 							onChange={(e) => setDescription(e.target.value)}
-							placeholder="Describe your item…"
+							placeholder={t('itemDescriptionPlaceholder')}
 							rows={4}
-							className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+							className="flex min-h-25 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
 							required
 						/>
 					</div>
 					<div className="grid gap-4 sm:grid-cols-2">
 						<div className="grid gap-2">
-							<Label>Condition</Label>
+							<Label>{t('condition')}</Label>
 							<Select
 								value={condition}
 								onValueChange={(v) => v && setCondition(v)}
 							>
 								<SelectTrigger>
-									<SelectValue placeholder="Select condition" />
+									<SelectValue placeholder={t('selectCondition')} />
 								</SelectTrigger>
 								<SelectContent>
-									<SelectItem value="NEW">New</SelectItem>
-									<SelectItem value="LIKE_NEW">Like New</SelectItem>
-									<SelectItem value="GOOD">Good</SelectItem>
-									<SelectItem value="FAIR">Fair</SelectItem>
+									<SelectItem value="NEW">{t('conditionNew')}</SelectItem>
+									<SelectItem value="LIKE_NEW">
+										{t('conditionLikeNew')}
+									</SelectItem>
+									<SelectItem value="GOOD">{t('conditionGood')}</SelectItem>
+									<SelectItem value="FAIR">{t('conditionFair')}</SelectItem>
 								</SelectContent>
 							</Select>
 						</div>
 						<div className="grid gap-2">
-							<Label>Category</Label>
+							<Label>{t('category')}</Label>
 							<Select
 								value={categoryId}
 								onValueChange={(v) => v && setCategoryId(v)}
 							>
 								<SelectTrigger>
-									<SelectValue placeholder="Select category" />
+									<SelectValue placeholder={t('selectCategory')} />
 								</SelectTrigger>
 								<SelectContent>
 									{categories.map((cat) => (
@@ -241,7 +317,7 @@ export function ItemForm({ categories, initialData }: Props) {
 			{/* Images */}
 			<Card>
 				<CardHeader>
-					<CardTitle>Images</CardTitle>
+					<CardTitle>{t('images')}</CardTitle>
 				</CardHeader>
 				<CardContent>
 					<div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
@@ -284,15 +360,23 @@ export function ItemForm({ categories, initialData }: Props) {
 						onChange={handleImageUpload}
 					/>
 					<p className="mt-2 text-xs text-muted-foreground">
-						{images.length}/5 images &middot; Max 5MB each
+						{t('imagesHint', { count: images.length })}
 					</p>
+					{uploadNotice && (
+						<div className="mt-2">
+							<Badge variant={uploadNotice.variant}>
+								{uploading && <Loader2 className="size-3 animate-spin" />}
+								{uploadNotice.message}
+							</Badge>
+						</div>
+					)}
 				</CardContent>
 			</Card>
 
 			{/* Location */}
 			<Card>
 				<CardHeader>
-					<CardTitle>Location</CardTitle>
+					<CardTitle>{t('location')}</CardTitle>
 				</CardHeader>
 				<CardContent className="grid gap-4">
 					<LocationPicker
@@ -305,12 +389,12 @@ export function ItemForm({ categories, initialData }: Props) {
 						}}
 					/>
 					<div className="grid gap-2">
-						<Label htmlFor="item-address">Address (optional)</Label>
+						<Label htmlFor="item-address">{t('addressOptional')}</Label>
 						<Input
 							id="item-address"
 							value={address}
 							onChange={(e) => setAddress(e.target.value)}
-							placeholder="Street address or area name"
+							placeholder={t('addressPlaceholder')}
 						/>
 					</div>
 					{latitude !== 0 && longitude !== 0 && (

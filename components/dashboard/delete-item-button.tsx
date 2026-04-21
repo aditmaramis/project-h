@@ -60,7 +60,7 @@ export function DeleteItemButton({
 				<DialogHeader>
 					<DialogTitle>{t('deleteItem')}</DialogTitle>
 					<DialogDescription>
-						{t('deleteConfirmation', { title: itemTitle })}
+						{t('confirmDelete')} {itemTitle}. {t('confirmDeleteDescription')}
 					</DialogDescription>
 				</DialogHeader>
 				<DialogFooter>

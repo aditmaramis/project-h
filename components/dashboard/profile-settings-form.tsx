@@ -46,6 +46,7 @@ export function ProfileSettingsForm({
 	const [saving, setSaving] = useState(false);
 	const [message, setMessage] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
+	const avatarBucket = 'Avatars';
 
 	const initials = name
 		? name
@@ -56,13 +57,31 @@ export function ProfileSettingsForm({
 				.slice(0, 2)
 		: '?';
 
+	function getAvatarUploadError(rawMessage: string | null | undefined): string {
+		if (!rawMessage) return t('imageUploadFailed');
+		const normalizedMessage = rawMessage.toLowerCase();
+		if (normalizedMessage.includes('bucket not found')) {
+			return t('missingStorageBucket', { bucket: avatarBucket });
+		}
+		if (normalizedMessage.includes('row-level security policy')) {
+			return t('storagePolicyDenied', { bucket: avatarBucket });
+		}
+		return rawMessage;
+	}
+
 	async function handleAvatarUpload(e: React.ChangeEvent<HTMLInputElement>) {
 		const file = e.target.files?.[0];
 		if (!file) return;
 
 		// Validate file type and size (max 2MB)
-		if (!file.type.startsWith('image/')) return;
-		if (file.size > 2 * 1024 * 1024) return;
+		if (!file.type.startsWith('image/')) {
+			setError(t('invalidImageType'));
+			return;
+		}
+		if (file.size > 2 * 1024 * 1024) {
+			setError(t('invalidAvatarSize'));
+			return;
+		}
 
 		setUploading(true);
 		setError(null);
@@ -79,18 +98,18 @@ export function ProfileSettingsForm({
 		const filePath = `${user.id}/avatar.${fileExt}`;
 
 		const { error: uploadError } = await supabase.storage
-			.from('avatars')
+			.from(avatarBucket)
 			.upload(filePath, file, { upsert: true });
 
 		if (uploadError) {
-			setError(uploadError.message);
+			setError(getAvatarUploadError(uploadError.message));
 			setUploading(false);
 			return;
 		}
 
 		const {
 			data: { publicUrl },
-		} = supabase.storage.from('avatars').getPublicUrl(filePath);
+		} = supabase.storage.from(avatarBucket).getPublicUrl(filePath);
 
 		// Append cache-buster to force refresh
 		setAvatarUrl(`${publicUrl}?t=${Date.now()}`);
@@ -117,7 +136,7 @@ export function ProfileSettingsForm({
 
 		if (!res.ok) {
 			const data = await res.json();
-			setError(data.error?.fieldErrors?.name?.[0] ?? 'Something went wrong');
+			setError(data.error?.fieldErrors?.name?.[0] ?? t('somethingWentWrong'));
 			return;
 		}
 
@@ -201,7 +220,7 @@ export function ProfileSettingsForm({
 							onChange={(e) => setBio(e.target.value)}
 							placeholder={t('bioPlaceholder')}
 							rows={3}
-							className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+							className="flex min-h-20 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
 							maxLength={500}
 						/>
 					</div>
