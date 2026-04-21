@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from '@/i18n/navigation';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,6 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ImagePlus, Loader2, X } from 'lucide-react';
 import { LocationPicker } from '@/components/map';
+import { useGeolocation } from '@/hooks/use-geolocation';
 import { useSupabase } from '@/hooks/use-supabase';
 import { createItemSchema, updateItemSchema } from '@/lib/validators/items';
 import type { Category } from '@/types';
@@ -40,7 +41,10 @@ type Props = {
 export function ItemForm({ categories, initialData }: Props) {
 	const supabase = useSupabase();
 	const router = useRouter();
+	const locale = useLocale();
 	const t = useTranslations('Dashboard');
+	const { latitude: detectedLatitude, longitude: detectedLongitude } =
+		useGeolocation();
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	const isEditing = !!initialData;
@@ -58,12 +62,77 @@ export function ItemForm({ categories, initialData }: Props) {
 	const [uploading, setUploading] = useState(false);
 	const [saving, setSaving] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const [resolvingLocationLabel, setResolvingLocationLabel] = useState(false);
+	const [didAutofillLocation, setDidAutofillLocation] = useState(isEditing);
 	const [uploadNotice, setUploadNotice] = useState<{
 		variant: 'default' | 'secondary' | 'destructive';
 		message: string;
 	} | null>(null);
 	const maxImageSizeBytes = 500 * 1024;
 	const itemBucket = 'Items';
+
+	useEffect(() => {
+		if (didAutofillLocation || isEditing) return;
+		if (detectedLatitude == null || detectedLongitude == null) return;
+
+		queueMicrotask(() => {
+			setLatitude(detectedLatitude);
+			setLongitude(detectedLongitude);
+			setDidAutofillLocation(true);
+		});
+	}, [detectedLatitude, detectedLongitude, didAutofillLocation, isEditing]);
+
+	useEffect(() => {
+		if (latitude === 0 && longitude === 0) return;
+
+		const controller = new AbortController();
+		queueMicrotask(() => {
+			setResolvingLocationLabel(true);
+		});
+
+		fetch(
+			`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&zoom=10`,
+			{
+				headers: {
+					'Accept-Language': locale,
+				},
+				signal: controller.signal,
+			},
+		)
+			.then((res) => res.json())
+			.then((data) => {
+				const resolvedAddress = data?.address;
+				const district =
+					resolvedAddress?.city_district ||
+					resolvedAddress?.suburb ||
+					resolvedAddress?.municipality ||
+					resolvedAddress?.city ||
+					resolvedAddress?.town ||
+					resolvedAddress?.village ||
+					resolvedAddress?.county ||
+					'';
+				const region =
+					resolvedAddress?.state ||
+					resolvedAddress?.region ||
+					resolvedAddress?.state_district ||
+					resolvedAddress?.province ||
+					'';
+				const country = resolvedAddress?.country || '';
+				const districtRegionCountry = [district, region, country]
+					.filter(Boolean)
+					.join(', ');
+
+				if (districtRegionCountry) {
+					setAddress(districtRegionCountry);
+				}
+			})
+			.catch(() => undefined)
+			.finally(() => {
+				setResolvingLocationLabel(false);
+			});
+
+		return () => controller.abort();
+	}, [latitude, locale, longitude]);
 
 	function getUploadErrorMessage(
 		rawMessage: string | null | undefined,
@@ -386,16 +455,28 @@ export function ItemForm({ categories, initialData }: Props) {
 						onLocationSelect={(lat, lng) => {
 							setLatitude(lat);
 							setLongitude(lng);
+							setDidAutofillLocation(true);
 						}}
 					/>
+					<p className="text-xs text-muted-foreground">
+						{t('locationApproximate')}
+					</p>
 					<div className="grid gap-2">
-						<Label htmlFor="item-address">{t('addressOptional')}</Label>
+						<Label htmlFor="item-address">
+							{t('locationDistrictRegionCountryLabel')}
+						</Label>
 						<Input
 							id="item-address"
 							value={address}
 							onChange={(e) => setAddress(e.target.value)}
-							placeholder={t('addressPlaceholder')}
+							placeholder={t('locationDistrictRegionCountryPlaceholder')}
+							autoComplete="address-level1"
 						/>
+						{resolvingLocationLabel && (
+							<p className="text-xs text-muted-foreground">
+								{t('locationDistrictRegionCountryResolving')}
+							</p>
+						)}
 					</div>
 					{latitude !== 0 && longitude !== 0 && (
 						<div className="flex gap-2">
