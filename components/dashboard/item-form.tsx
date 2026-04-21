@@ -43,6 +43,7 @@ export function ItemForm({ categories, initialData }: Props) {
 	const router = useRouter();
 	const locale = useLocale();
 	const t = useTranslations('Dashboard');
+	const categoryT = useTranslations('Categories');
 	const { latitude: detectedLatitude, longitude: detectedLongitude } =
 		useGeolocation();
 	const fileInputRef = useRef<HTMLInputElement>(null);
@@ -70,6 +71,58 @@ export function ItemForm({ categories, initialData }: Props) {
 	} | null>(null);
 	const maxImageSizeBytes = 500 * 1024;
 	const itemBucket = 'Items';
+	const formSelectTriggerClassName =
+		'w-full transition-none focus-visible:ring-0';
+	const formSelectContentClassName =
+		'data-open:animate-none data-closed:animate-none';
+
+	const categoryTranslationKeys = new Set([
+		'electronics',
+		'clothing',
+		'furniture',
+		'books',
+		'kitchen',
+		'sports',
+		'toys',
+		'other',
+	]);
+
+	function formatDisplayLabel(raw: string) {
+		return raw
+			.split(/[\s_-]+/)
+			.filter(Boolean)
+			.map(
+				(segment) =>
+					segment.charAt(0).toUpperCase() + segment.slice(1).toLowerCase(),
+			)
+			.join(' ');
+	}
+
+	function getConditionLabel(value: string) {
+		switch (value) {
+			case 'NEW':
+				return t('conditionNew');
+			case 'LIKE_NEW':
+				return t('conditionLikeNew');
+			case 'GOOD':
+				return t('conditionGood');
+			case 'FAIR':
+				return t('conditionFair');
+			default:
+				return formatDisplayLabel(value);
+		}
+	}
+
+	function getCategoryLabel(category: Category) {
+		const slugKey = category.slug.toLowerCase();
+		if (categoryTranslationKeys.has(slugKey)) {
+			return categoryT(slugKey);
+		}
+
+		return formatDisplayLabel(category.name);
+	}
+
+	const selectedCategory = categories.find((cat) => cat.id === categoryId);
 
 	useEffect(() => {
 		if (didAutofillLocation || isEditing) return;
@@ -345,10 +398,12 @@ export function ItemForm({ categories, initialData }: Props) {
 								value={condition}
 								onValueChange={(v) => v && setCondition(v)}
 							>
-								<SelectTrigger>
-									<SelectValue placeholder={t('selectCondition')} />
+								<SelectTrigger className={formSelectTriggerClassName}>
+									<SelectValue placeholder={t('selectCondition')}>
+										{condition ? getConditionLabel(condition) : undefined}
+									</SelectValue>
 								</SelectTrigger>
-								<SelectContent>
+								<SelectContent className={formSelectContentClassName}>
 									<SelectItem value="NEW">{t('conditionNew')}</SelectItem>
 									<SelectItem value="LIKE_NEW">
 										{t('conditionLikeNew')}
@@ -364,16 +419,20 @@ export function ItemForm({ categories, initialData }: Props) {
 								value={categoryId}
 								onValueChange={(v) => v && setCategoryId(v)}
 							>
-								<SelectTrigger>
-									<SelectValue placeholder={t('selectCategory')} />
+								<SelectTrigger className={formSelectTriggerClassName}>
+									<SelectValue placeholder={t('selectCategory')}>
+										{selectedCategory
+											? getCategoryLabel(selectedCategory)
+											: undefined}
+									</SelectValue>
 								</SelectTrigger>
-								<SelectContent>
+								<SelectContent className={formSelectContentClassName}>
 									{categories.map((cat) => (
 										<SelectItem
 											key={cat.id}
 											value={cat.id}
 										>
-											{cat.name}
+											{getCategoryLabel(cat)}
 										</SelectItem>
 									))}
 								</SelectContent>
