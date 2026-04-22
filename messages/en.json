@@ -223,7 +223,21 @@
 		"startConversation": "Start conversation",
 		"openConversation": "Open conversation",
 		"startingConversation": "Starting...",
-		"startConversationError": "Failed to start conversation"
+		"startConversationError": "Failed to start conversation",
+		"widgetOpen": "Open quick messages",
+		"widgetTitle": "Quick messages",
+		"widgetDescription": "Open a conversation without leaving this page.",
+		"widgetLoadError": "Unable to load conversations right now.",
+		"widgetThreadLoadError": "Unable to load this conversation right now.",
+		"widgetThreadLoading": "Loading conversation...",
+		"widgetRetry": "Retry",
+		"widgetEmpty": "No conversations yet.",
+		"widgetViewAll": "Go to full messages page",
+		"widgetOpenConversationPage": "Open full conversation page",
+		"widgetBack": "Back to conversation list",
+		"widgetUnknownItem": "Untitled item",
+		"widgetRealtimeFallback": "Live updates are reconnecting. Messages may update shortly.",
+		"widgetMessageInputLabel": "Message input"
 	},
 	"ProfilePage": {
 		"title": "Profile",

@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import { TopBar } from '@/components/layout/top-bar';
 import { Header } from '@/components/layout/header';
+import { FloatingChatWidgetServer } from '@/components/chat/floating-chat-widget-server';
 import { TooltipProvider } from '@/components/ui/tooltip';
 
 const geistSans = Geist({
@@ -70,6 +71,7 @@ export default async function LocaleLayout({ children, params }: Props) {
 						<TopBar />
 						<Header />
 						{children}
+						<FloatingChatWidgetServer />
 					</TooltipProvider>
 				</NextIntlClientProvider>
 			</body>

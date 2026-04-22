@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from '@/i18n/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
@@ -454,10 +455,11 @@ export function ItemForm({ categories, initialData }: Props) {
 								key={url}
 								className="group relative aspect-square"
 							>
-								<img
+								<Image
 									src={url}
 									alt={`Image ${i + 1}`}
-									className="size-full rounded-md object-cover"
+									fill
+									className="rounded-md object-cover"
 								/>
 								<button
 									type="button"

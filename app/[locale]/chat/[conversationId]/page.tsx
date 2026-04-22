@@ -52,6 +52,17 @@ export default async function ConversationPage({ params }: Props) {
 		notFound();
 	}
 
+	await prisma.message.updateMany({
+		where: {
+			conversationId,
+			senderId: { not: user.id },
+			readAt: null,
+		},
+		data: {
+			readAt: new Date(),
+		},
+	});
+
 	const otherParticipant =
 		conversation.participants.find((p) => p.profile.id !== user.id)?.profile ??
 		null;

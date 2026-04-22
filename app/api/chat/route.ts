@@ -37,7 +37,32 @@ export async function GET() {
 		orderBy: { createdAt: 'desc' },
 	});
 
-	return NextResponse.json(conversations);
+	const unreadGrouped = await prisma.message.groupBy({
+		by: ['conversationId'],
+		where: {
+			readAt: null,
+			NOT: { senderId: user.id },
+			conversation: {
+				participants: {
+					some: { profileId: user.id },
+				},
+			},
+		},
+		_count: {
+			_all: true,
+		},
+	});
+
+	const unreadByConversation = new Map(
+		unreadGrouped.map((row) => [row.conversationId, row._count._all]),
+	);
+
+	const conversationsWithUnread = conversations.map((conversation) => ({
+		...conversation,
+		unreadCount: unreadByConversation.get(conversation.id) ?? 0,
+	}));
+
+	return NextResponse.json(conversationsWithUnread);
 }
 
 export async function POST(request: Request) {

@@ -223,7 +223,21 @@
 		"startConversation": "Mulai percakapan",
 		"openConversation": "Buka percakapan",
 		"startingConversation": "Memulai...",
-		"startConversationError": "Gagal memulai percakapan"
+		"startConversationError": "Gagal memulai percakapan",
+		"widgetOpen": "Buka pesan cepat",
+		"widgetTitle": "Pesan cepat",
+		"widgetDescription": "Buka percakapan tanpa meninggalkan halaman ini.",
+		"widgetLoadError": "Tidak dapat memuat percakapan saat ini.",
+		"widgetThreadLoadError": "Tidak dapat memuat percakapan ini saat ini.",
+		"widgetThreadLoading": "Memuat percakapan...",
+		"widgetRetry": "Coba lagi",
+		"widgetEmpty": "Belum ada percakapan.",
+		"widgetViewAll": "Buka halaman pesan lengkap",
+		"widgetOpenConversationPage": "Buka halaman percakapan lengkap",
+		"widgetBack": "Kembali ke daftar percakapan",
+		"widgetUnknownItem": "Barang tanpa judul",
+		"widgetRealtimeFallback": "Pembaruan langsung sedang menyambung ulang. Pesan mungkin akan diperbarui sesaat lagi.",
+		"widgetMessageInputLabel": "Kolom pesan"
 	},
 	"ProfilePage": {
 		"title": "Profil",
