@@ -172,6 +172,10 @@
 		"conditionLikeNew": "Seperti Baru",
 		"conditionGood": "Bagus",
 		"conditionFair": "Layak",
+		"pickupMethods": "Metode pengambilan",
+		"pickupMethodsHint": "Pilih salah satu atau keduanya.",
+		"pickupMethodSelfPickup": "Ambil sendiri",
+		"pickupMethodDelivery": "Diantar",
 		"selectCategory": "Pilih kategori",
 		"images": "Gambar",
 		"imagesHint": "{count}/5 gambar · Maks 500KB per gambar",
@@ -206,6 +210,9 @@
 		"details": "Detail Barang",
 		"postedOn": "Diposting pada {date}",
 		"addressUnavailable": "Alamat tidak tersedia",
+		"pickupMethods": "Metode pengambilan",
+		"pickupMethodSelfPickup": "Ambil sendiri",
+		"pickupMethodDelivery": "Diantar",
 		"viewDonorProfile": "Lihat profil donatur"
 	},
 	"Chat": {

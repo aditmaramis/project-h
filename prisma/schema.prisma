@@ -27,6 +27,11 @@ enum ItemStatus {
   DONATED
 }
 
+enum PickupMethod {
+  SELF_PICKUP
+  DELIVERY
+}
+
 enum ReportStatus {
   PENDING
   REVIEWED
@@ -118,6 +123,7 @@ model Item {
   description String
   images      String[]      // Supabase Storage URLs
   condition   ItemCondition
+  pickupMethods PickupMethod[] @default([SELF_PICKUP])
   status      ItemStatus    @default(AVAILABLE)
 
   // Location

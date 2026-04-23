@@ -55,6 +55,7 @@ export default async function EditItemPage({ params }: Props) {
 							title: item.title,
 							description: item.description,
 							condition: item.condition,
+							pickupMethods: item.pickupMethods,
 							categoryId: item.categoryId,
 							latitude: item.latitude,
 							longitude: item.longitude,

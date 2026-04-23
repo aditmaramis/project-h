@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+const pickupMethodSchema = z.enum(['SELF_PICKUP', 'DELIVERY']);
+
 export const createItemSchema = z.object({
 	title: z
 		.string()
@@ -10,6 +12,13 @@ export const createItemSchema = z.object({
 		.min(10, 'Description must be at least 10 characters')
 		.max(2000, 'Description must be at most 2000 characters'),
 	condition: z.enum(['NEW', 'LIKE_NEW', 'GOOD', 'FAIR']),
+	pickupMethods: z
+		.array(pickupMethodSchema)
+		.min(1, 'Please select at least one pickup method')
+		.max(2)
+		.refine((methods) => new Set(methods).size === methods.length, {
+			message: 'Pickup methods must be unique',
+		}),
 	categoryId: z.string().min(1, 'Please select a category'),
 	latitude: z.number().min(-90).max(90),
 	longitude: z.number().min(-180).max(180),

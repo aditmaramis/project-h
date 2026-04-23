@@ -172,6 +172,10 @@
 		"conditionLikeNew": "Like New",
 		"conditionGood": "Good",
 		"conditionFair": "Fair",
+		"pickupMethods": "Pickup Methods",
+		"pickupMethodsHint": "Select one or both options.",
+		"pickupMethodSelfPickup": "Self pickup",
+		"pickupMethodDelivery": "Delivery",
 		"selectCategory": "Select category",
 		"images": "Images",
 		"imagesHint": "{count}/5 images · Max 500KB each",
@@ -206,6 +210,9 @@
 		"details": "Item Details",
 		"postedOn": "Posted on {date}",
 		"addressUnavailable": "Address not provided",
+		"pickupMethods": "Pickup methods",
+		"pickupMethodSelfPickup": "Self pickup",
+		"pickupMethodDelivery": "Delivery",
 		"viewDonorProfile": "View donor profile"
 	},
 	"Chat": {

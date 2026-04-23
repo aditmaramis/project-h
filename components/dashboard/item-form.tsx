@@ -7,6 +7,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
 	Select,
 	SelectContent,
@@ -23,6 +24,8 @@ import { useSupabase } from '@/hooks/use-supabase';
 import { createItemSchema, updateItemSchema } from '@/lib/validators/items';
 import type { Category } from '@/types';
 
+type PickupMethod = 'SELF_PICKUP' | 'DELIVERY';
+
 type Props = {
 	categories: Category[];
 	initialData?: {
@@ -30,6 +33,7 @@ type Props = {
 		title: string;
 		description: string;
 		condition: string;
+		pickupMethods: PickupMethod[];
 		categoryId: string;
 		latitude: number;
 		longitude: number;
@@ -56,6 +60,9 @@ export function ItemForm({ categories, initialData }: Props) {
 		initialData?.description ?? '',
 	);
 	const [condition, setCondition] = useState(initialData?.condition ?? '');
+	const [pickupMethods, setPickupMethods] = useState<PickupMethod[]>(
+		initialData?.pickupMethods ?? ['SELF_PICKUP'],
+	);
 	const [categoryId, setCategoryId] = useState(initialData?.categoryId ?? '');
 	const [latitude, setLatitude] = useState(initialData?.latitude ?? 0);
 	const [longitude, setLongitude] = useState(initialData?.longitude ?? 0);
@@ -121,6 +128,17 @@ export function ItemForm({ categories, initialData }: Props) {
 		}
 
 		return formatDisplayLabel(category.name);
+	}
+
+	function togglePickupMethod(method: PickupMethod, checked: boolean) {
+		setPickupMethods((prev) => {
+			if (checked) {
+				if (prev.includes(method)) return prev;
+				return [...prev, method];
+			}
+
+			return prev.filter((value) => value !== method);
+		});
 	}
 
 	const selectedCategory = categories.find((cat) => cat.id === categoryId);
@@ -319,6 +337,7 @@ export function ItemForm({ categories, initialData }: Props) {
 			title,
 			description,
 			condition,
+			pickupMethods,
 			categoryId,
 			latitude,
 			longitude,
@@ -439,6 +458,44 @@ export function ItemForm({ categories, initialData }: Props) {
 								</SelectContent>
 							</Select>
 						</div>
+					</div>
+					<div className="grid gap-2">
+						<Label>{t('pickupMethods')}</Label>
+						<div className="grid gap-3 rounded-md border p-3">
+							<div className="flex items-center gap-2">
+								<Checkbox
+									id="pickup-self"
+									checked={pickupMethods.includes('SELF_PICKUP')}
+									onCheckedChange={(checked) =>
+										togglePickupMethod('SELF_PICKUP', checked === true)
+									}
+								/>
+								<Label
+									htmlFor="pickup-self"
+									className="font-normal"
+								>
+									{t('pickupMethodSelfPickup')}
+								</Label>
+							</div>
+							<div className="flex items-center gap-2">
+								<Checkbox
+									id="pickup-delivery"
+									checked={pickupMethods.includes('DELIVERY')}
+									onCheckedChange={(checked) =>
+										togglePickupMethod('DELIVERY', checked === true)
+									}
+								/>
+								<Label
+									htmlFor="pickup-delivery"
+									className="font-normal"
+								>
+									{t('pickupMethodDelivery')}
+								</Label>
+							</div>
+						</div>
+						<p className="text-xs text-muted-foreground">
+							{t('pickupMethodsHint')}
+						</p>
 					</div>
 				</CardContent>
 			</Card>

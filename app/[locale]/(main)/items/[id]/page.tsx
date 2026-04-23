@@ -65,6 +65,11 @@ export default async function ItemDetailPage({ params }: Props) {
 			: null;
 
 	const donorName = item.donor.name ?? t('anonymousDonor');
+	const pickupMethodLabels = item.pickupMethods.map((method) =>
+		method === 'SELF_PICKUP'
+			? t('pickupMethodSelfPickup')
+			: t('pickupMethodDelivery'),
+	);
 
 	return (
 		<div className="container mx-auto grid gap-6 px-4 py-8 lg:grid-cols-[1.2fr,0.8fr]">
@@ -111,6 +116,19 @@ export default async function ItemDetailPage({ params }: Props) {
 					<p className="text-sm text-muted-foreground">
 						{item.address || t('addressUnavailable')}
 					</p>
+					<div className="grid gap-2">
+						<p className="text-sm font-medium">{t('pickupMethods')}</p>
+						<div className="flex flex-wrap gap-2">
+							{pickupMethodLabels.map((label) => (
+								<Badge
+									key={label}
+									variant="outline"
+								>
+									{label}
+								</Badge>
+							))}
+						</div>
+					</div>
 
 					<div className="grid gap-2">
 						<Button
