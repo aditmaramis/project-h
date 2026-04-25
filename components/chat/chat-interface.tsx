@@ -9,6 +9,7 @@ import React, {
 } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { Link2 } from 'lucide-react';
+import Image, { type ImageLoader } from 'next/image';
 
 export interface LoaderConfig {
 	enabled: boolean;
@@ -119,6 +120,16 @@ const hexToRgba = (hex: string, alpha: number): string => {
 	return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
 
+const passthroughImageLoader: ImageLoader = ({ src }) => src;
+
+const TRANSPARENT_PIXEL =
+	'data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA=';
+
+function safeImageSrc(src: string) {
+	const trimmed = src.trim();
+	return trimmed.length > 0 ? trimmed : TRANSPARENT_PIXEL;
+}
+
 const MessageLoader = React.memo<MessageLoaderProps>(
 	({ dotColor = '#9ca3af' }) => {
 		const dotAnimation = {
@@ -193,6 +204,11 @@ const MessageBubble = React.memo<MessageBubbleProps>(
 			onContentReady?.();
 		}, [onContentReady]);
 
+		const handleImageError = useCallback(() => {
+			setImageLoaded(true);
+			onContentReady?.();
+		}, [onContentReady]);
+
 		const bubbleStyle = useMemo(
 			() => ({
 				backgroundColor: chatStyle.backgroundColor,
@@ -260,13 +276,19 @@ const MessageBubble = React.memo<MessageBubbleProps>(
 											<MessageLoader dotColor={uiConfig.loader.dotColor} />
 										</div>
 									) : null}
-									<img
-										src={message.content}
+									<Image
+										src={safeImageSrc(message.content)}
 										alt={message.imageAlt ?? ''}
+										loader={passthroughImageLoader}
+										unoptimized
+										width={192}
+										height={192}
+										sizes="192px"
 										className={`max-h-full h-auto max-w-48 rounded object-cover ${
 											!imageLoaded ? 'hidden' : ''
 										}`}
 										onLoad={handleImageLoad}
+										onError={handleImageError}
 									/>
 								</div>
 							) : null}
@@ -379,19 +401,27 @@ const MessageWrapper = React.memo<MessageWrapperProps>(
 			<div className={messageClass}>
 				<AnimatePresence mode="wait">
 					{shouldShowAvatar ? (
-						<motion.img
+						<motion.div
 							key="avatar"
-							src={person.avatar}
-							alt={person.name}
-							className="size-8 flex-shrink-0 rounded-full border-[1.5px] border-white object-cover"
+							className="relative size-8 shrink-0 overflow-hidden rounded-full border-[1.5px] border-white"
 							initial={{ opacity: 0, scale: 0 }}
 							animate={{ opacity: 1, scale: 1 }}
 							exit={{ opacity: 0, scale: 0 }}
 							transition={{ duration: 0.2 }}
-						/>
+						>
+							<Image
+								src={safeImageSrc(person.avatar)}
+								alt={person.name}
+								loader={passthroughImageLoader}
+								unoptimized
+								fill
+								sizes="32px"
+								className="object-cover"
+							/>
+						</motion.div>
 					) : (
 						<div
-							className="size-8 flex-shrink-0"
+							className="size-8 shrink-0"
 							key="spacer"
 						/>
 					)}
