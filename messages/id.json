@@ -244,7 +244,8 @@
 		"widgetBack": "Kembali ke daftar percakapan",
 		"widgetUnknownItem": "Barang tanpa judul",
 		"widgetRealtimeFallback": "Pembaruan langsung sedang menyambung ulang. Pesan mungkin akan diperbarui sesaat lagi.",
-		"widgetMessageInputLabel": "Kolom pesan"
+		"widgetMessageInputLabel": "Kolom pesan",
+		"widgetCurrentUser": "Anda"
 	},
 	"ProfilePage": {
 		"title": "Profil",

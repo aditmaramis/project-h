@@ -244,7 +244,8 @@
 		"widgetBack": "Back to conversation list",
 		"widgetUnknownItem": "Untitled item",
 		"widgetRealtimeFallback": "Live updates are reconnecting. Messages may update shortly.",
-		"widgetMessageInputLabel": "Message input"
+		"widgetMessageInputLabel": "Message input",
+		"widgetCurrentUser": "You"
 	},
 	"ProfilePage": {
 		"title": "Profile",

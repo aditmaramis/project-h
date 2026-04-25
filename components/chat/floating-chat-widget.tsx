@@ -1,9 +1,14 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { usePathname, useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import { ArrowLeft, Loader2, MessageCircleMore } from 'lucide-react';
+import ChatInterface, {
+	type ChatConfig,
+	type Message as ChatMessage,
+	type UiConfig as ChatUiConfig,
+} from '@/components/chat/chat-interface';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -97,6 +102,19 @@ function getInitials(name: string | null) {
 		.slice(0, 2);
 }
 
+function isLikelyImageUrl(value: string) {
+	const trimmed = value.trim();
+	if (!/^https?:\/\//i.test(trimmed)) return false;
+	if (trimmed.includes('images.unsplash.com')) return true;
+
+	return /\.(png|jpe?g|gif|webp|avif|svg)(\?.*)?$/i.test(trimmed);
+}
+
+const FALLBACK_LEFT_AVATAR =
+	'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&q=80';
+const FALLBACK_RIGHT_AVATAR =
+	'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&q=80';
+
 export function FloatingChatWidget({ userId }: Props) {
 	const supabase = useSupabase();
 	const router = useRouter();
@@ -118,7 +136,6 @@ export function FloatingChatWidget({ userId }: Props) {
 	const [sending, setSending] = useState(false);
 	const [sendingError, setSendingError] = useState<string | null>(null);
 	const [isRealtimeConnected, setIsRealtimeConnected] = useState(false);
-	const messagesEndRef = useRef<HTMLDivElement>(null);
 
 	const isChatRoute = pathname === '/chat' || pathname.startsWith('/chat/');
 	const widgetRealtimeFallbackText = t.has('widgetRealtimeFallback')
@@ -201,13 +218,92 @@ export function FloatingChatWidget({ userId }: Props) {
 		}
 	}, [open]);
 
-	useEffect(() => {
-		messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-	}, [activeConversation?.messages.length]);
-
 	const otherParticipant =
 		activeConversation?.participants.find((p) => p.profile.id !== userId)
 			?.profile ?? null;
+
+	const threadChatConfig = useMemo<ChatConfig | null>(() => {
+		if (!activeConversation) {
+			return null;
+		}
+
+		const leftProfile =
+			activeConversation.participants.find(
+				(participant) => participant.profile.id !== userId,
+			)?.profile ?? null;
+		const rightProfile =
+			activeConversation.messages.find((message) => message.senderId === userId)
+				?.sender ?? null;
+
+		const messages: ChatMessage[] = activeConversation.messages.map(
+			(message) => {
+				const isImage = isLikelyImageUrl(message.content);
+
+				return {
+					id: message.id,
+					sender: message.senderId === userId ? 'right' : 'left',
+					type: isImage ? 'image' : 'text',
+					content: message.content,
+					maxWidth: isImage ? 'max-w-xs' : 'max-w-sm',
+					loader: {
+						enabled: false,
+						duration: 0,
+					},
+					imageAlt: message.sender.name ?? t('unknownUser'),
+				};
+			},
+		);
+
+		return {
+			leftPerson: {
+				name: leftProfile?.name ?? t('unknownUser'),
+				avatar: leftProfile?.avatarUrl ?? FALLBACK_LEFT_AVATAR,
+			},
+			rightPerson: {
+				name:
+					rightProfile?.name ??
+					(t.has('widgetCurrentUser')
+						? t('widgetCurrentUser')
+						: t('unknownUser')),
+				avatar: rightProfile?.avatarUrl ?? FALLBACK_RIGHT_AVATAR,
+			},
+			messages,
+		};
+	}, [activeConversation, userId, t]);
+
+	const threadUiConfig = useMemo<ChatUiConfig>(
+		() => ({
+			containerWidth: '100%',
+			containerHeight: '100%',
+			backgroundColor: '#F5EBE0',
+			autoRestart: false,
+			sequential: false,
+			loader: {
+				dotColor: '#936639',
+			},
+			linkBubbles: {
+				backgroundColor: '#F5EBE0',
+				textColor: '#936639',
+				iconColor: '#936639',
+				borderColor: '#F5EBE0',
+			},
+			leftChat: {
+				backgroundColor: '#FDF6EE',
+				textColor: '#582F0E',
+				borderColor: '#E3D5CA',
+				showBorder: true,
+				nameColor: '#936639',
+			},
+			rightChat: {
+				backgroundColor: '#EDE0D4',
+				textColor: '#582F0E',
+				borderColor: '#d1d1d1',
+				showBorder: false,
+				nameColor: '#936639',
+			},
+		}),
+		[],
+	);
 
 	const unreadTotal = conversations.reduce(
 		(total, conversation) => total + conversation.unreadCount,
@@ -612,7 +708,7 @@ export function FloatingChatWidget({ userId }: Props) {
 					) : (
 						<div className="flex min-h-0 flex-1 flex-col">
 							<div
-								className="min-h-0 flex-1 overflow-y-auto p-4"
+								className="min-h-0 flex-1 p-4"
 								aria-busy={threadLoading}
 							>
 								{threadLoading ? (
@@ -641,37 +737,21 @@ export function FloatingChatWidget({ userId }: Props) {
 
 								{!threadLoading && !threadError && activeConversation ? (
 									<div
-										className="grid gap-2"
-										role="list"
+										className="h-full"
 										aria-live="polite"
 									>
-										{activeConversation.messages.length === 0 ? (
+										{activeConversation.messages.length === 0 ||
+										!threadChatConfig ? (
 											<p className="text-sm text-muted-foreground">
 												{t('noMessagesYet')}
 											</p>
 										) : (
-											activeConversation.messages.map((message) => {
-												const isMine = message.senderId === userId;
-
-												return (
-													<div
-														key={message.id}
-														role="listitem"
-														className={
-															isMine ? 'justify-self-end' : 'justify-self-start'
-														}
-													>
-														<div className="max-w-[70%] rounded-lg border bg-background px-3 py-2 text-sm">
-															<p className="mb-1 text-xs text-muted-foreground">
-																{message.sender.name ?? t('unknownUser')}
-															</p>
-															<p>{message.content}</p>
-														</div>
-													</div>
-												);
-											})
+											<ChatInterface
+												config={threadChatConfig}
+												uiConfig={threadUiConfig}
+												containerClassName="h-full w-full"
+											/>
 										)}
-										<div ref={messagesEndRef} />
 									</div>
 								) : null}
 							</div>
