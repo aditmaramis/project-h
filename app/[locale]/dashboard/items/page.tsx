@@ -18,6 +18,7 @@ import {
 import { Plus, Pencil } from 'lucide-react';
 import { MarkDonatedButton } from '@/components/dashboard/mark-donated-button';
 import { DeleteItemButton } from '@/components/dashboard/delete-item-button';
+import { buildItemHref } from '@/lib/item-url';
 
 type Props = {
 	params: Promise<{ locale: string }>;
@@ -110,7 +111,10 @@ export default async function MyItemsPage({ params }: Props) {
 									</TableCell>
 									<TableCell className="font-medium">
 										<Link
-											href={`/items/${item.id}`}
+											href={buildItemHref({
+												categorySlug: item.category.slug,
+												itemSlug: item.slug,
+											})}
 											className="hover:underline"
 										>
 											{item.title}

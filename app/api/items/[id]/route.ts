@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { createClient } from '@/lib/supabase/server';
+import { generateUniqueItemSlug } from '@/lib/item-slug';
 import { updateItemSchema } from '@/lib/validators/items';
 
 type RouteContext = {
@@ -37,7 +38,16 @@ export async function PATCH(request: Request, { params }: RouteContext) {
 		return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 	}
 
-	const item = await prisma.item.findUnique({ where: { id } });
+	const item = await prisma.item.findUnique({
+		where: { id },
+		select: {
+			id: true,
+			title: true,
+			slug: true,
+			categoryId: true,
+			donorId: true,
+		},
+	});
 	if (!item) {
 		return NextResponse.json({ error: 'Not found' }, { status: 404 });
 	}
@@ -55,9 +65,27 @@ export async function PATCH(request: Request, { params }: RouteContext) {
 		);
 	}
 
+	const nextTitle = parsed.data.title ?? item.title;
+	const nextCategoryId = parsed.data.categoryId ?? item.categoryId;
+	const shouldRegenerateSlug =
+		nextTitle !== item.title ||
+		nextCategoryId !== item.categoryId ||
+		!item.slug;
+
+	const nextSlug = shouldRegenerateSlug
+		? await generateUniqueItemSlug({
+				title: nextTitle,
+				categoryId: nextCategoryId,
+				excludeItemId: item.id,
+			})
+		: item.slug;
+
 	const updated = await prisma.item.update({
 		where: { id },
-		data: parsed.data,
+		data: {
+			...parsed.data,
+			slug: nextSlug,
+		},
 		include: { category: true },
 	});
 

@@ -8,6 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { FavoriteButton } from '@/components/dashboard/favorite-button';
+import { buildItemHref } from '@/lib/item-url';
 
 type Props = {
 	params: Promise<{ locale: string }>;
@@ -80,7 +81,10 @@ export default async function FavoritesPage({ params }: Props) {
 								</div>
 								<CardContent className="p-3">
 									<Link
-										href={`/items/${item.id}`}
+										href={buildItemHref({
+											categorySlug: item.category.slug,
+											itemSlug: item.slug,
+										})}
 										className="font-medium hover:underline line-clamp-1"
 									>
 										{item.title}

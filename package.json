@@ -10,6 +10,7 @@
 		"db:migrate": "npx prisma migrate dev",
 		"db:push": "npx prisma db push",
 		"db:seed": "npx prisma db seed",
+		"db:backfill:item-slugs": "npx tsx scripts/backfill-item-slugs.ts",
 		"db:studio": "npx prisma studio",
 		"db:generate": "npx prisma generate",
 		"postinstall": "npx prisma generate"

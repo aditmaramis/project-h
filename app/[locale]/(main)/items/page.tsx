@@ -2,6 +2,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
+import { buildItemHref } from '@/lib/item-url';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { FavoriteButton } from '@/components/dashboard/favorite-button';
@@ -23,7 +24,7 @@ export default async function BrowseItemsPage({ params }: Props) {
 	const items = await prisma.item.findMany({
 		where: { status: 'AVAILABLE' },
 		include: {
-			category: { select: { name: true } },
+			category: { select: { name: true, slug: true } },
 			donor: { select: { id: true, name: true } },
 		},
 		orderBy: { createdAt: 'desc' },
@@ -77,7 +78,10 @@ export default async function BrowseItemsPage({ params }: Props) {
 								<CardHeader className="pb-2">
 									<CardTitle className="line-clamp-1 text-base">
 										<Link
-											href={`/items/${item.id}`}
+											href={buildItemHref({
+												categorySlug: item.category.slug,
+												itemSlug: item.slug,
+											})}
 											className="hover:underline"
 										>
 											{item.title}

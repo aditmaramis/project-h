@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { createClient } from '@/lib/supabase/server';
+import { generateUniqueItemSlug } from '@/lib/item-slug';
 import { createItemSchema } from '@/lib/validators/items';
 
 export async function GET(request: Request) {
@@ -72,9 +73,15 @@ export async function POST(request: Request) {
 		);
 	}
 
+	const slug = await generateUniqueItemSlug({
+		title: parsed.data.title,
+		categoryId: parsed.data.categoryId,
+	});
+
 	const item = await prisma.item.create({
 		data: {
 			...parsed.data,
+			slug,
 			donorId: user.id,
 		},
 		include: {

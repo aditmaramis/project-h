@@ -1,9 +1,10 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { Share2 } from 'lucide-react';
-import { Link } from '@/i18n/navigation';
+import { Link, redirect } from '@/i18n/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
+import { buildItemHref } from '@/lib/item-url';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -15,24 +16,44 @@ import { ItemImageGallery } from '@/components/items/item-image-gallery';
 import { buildProfileHref } from '@/lib/profile-url';
 
 type Props = {
-	params: Promise<{ locale: string; id: string }>;
+	params: Promise<{ locale: string; category: string; 'item-name': string }>;
 };
 
 export default async function ItemDetailPage({ params }: Props) {
-	const { locale, id } = await params;
+	const {
+		locale,
+		category: rawCategory,
+		['item-name']: rawItemSlug,
+	} = await params;
 	setRequestLocale(locale);
 	const t = await getTranslations('Items');
+	const dashboardT = await getTranslations('Dashboard');
+	const authT = await getTranslations('Auth');
 
-	const supabase = await createClient();
-	const {
-		data: { user },
-	} = await supabase.auth.getUser();
+	function formatDisplayLabel(raw: string) {
+		return raw
+			.split(/[\s_-]+/)
+			.filter(Boolean)
+			.map(
+				(segment) =>
+					segment.charAt(0).toUpperCase() + segment.slice(1).toLowerCase(),
+			)
+			.join(' ');
+	}
 
-	const item = await prisma.item.findUnique({
-		where: { id },
+	const normalizedCategory = rawCategory.toLowerCase();
+	const normalizedItemSlug = rawItemSlug.toLowerCase();
+
+	const item = await prisma.item.findFirst({
+		where: {
+			slug: normalizedItemSlug,
+			category: { slug: normalizedCategory },
+		},
 		include: {
-			category: { select: { name: true } },
-			donor: { select: { id: true, name: true, avatarUrl: true } },
+			category: { select: { name: true, slug: true } },
+			donor: {
+				select: { id: true, name: true, avatarUrl: true, accountType: true },
+			},
 		},
 	});
 
@@ -40,7 +61,23 @@ export default async function ItemDetailPage({ params }: Props) {
 		notFound();
 	}
 
-	const isOwnItem = !!user && user.id === item.donorId;
+	const canonicalHref = buildItemHref({
+		categorySlug: item.category.slug,
+		itemSlug: item.slug,
+	});
+	const canonicalItemSlug = item.slug;
+
+	if (rawCategory !== item.category.slug || rawItemSlug !== canonicalItemSlug) {
+		redirect({ href: canonicalHref, locale });
+		return null;
+	}
+
+	const supabase = await createClient();
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+
+	const isOwnItem = Boolean(user) && user.id === item.donorId;
 
 	const favoriteRow = user
 		? await prisma.favorite.findUnique({
@@ -77,13 +114,27 @@ export default async function ItemDetailPage({ params }: Props) {
 			.join('')
 			.toUpperCase()
 			.slice(0, 2) || '?';
+	const donorAccountTypeLabel =
+		item.donor.accountType === 'ORGANIZATION'
+			? authT('organization')
+			: authT('personal');
 	const pickupMethodLabels = item.pickupMethods.map((method) =>
 		method === 'SELF_PICKUP'
 			? t('pickupMethodSelfPickup')
 			: t('pickupMethodDelivery'),
 	);
+	const conditionLabel =
+		item.condition === 'NEW'
+			? dashboardT('conditionNew')
+			: item.condition === 'LIKE_NEW'
+				? dashboardT('conditionLikeNew')
+				: item.condition === 'GOOD'
+					? dashboardT('conditionGood')
+					: item.condition === 'FAIR'
+						? dashboardT('conditionFair')
+						: formatDisplayLabel(item.condition);
 	const itemPath =
-		locale === 'en' ? `/items/${item.id}` : `/${locale}/items/${item.id}`;
+		locale === 'en' ? canonicalHref : `/${locale}${canonicalHref}`;
 	const shareHref = `mailto:?subject=${encodeURIComponent(item.title)}&body=${encodeURIComponent(`${item.title}\n${itemPath}`)}`;
 
 	return (
@@ -101,7 +152,7 @@ export default async function ItemDetailPage({ params }: Props) {
 								<CardTitle className="text-2xl">{item.title}</CardTitle>
 								<div className="flex flex-wrap gap-2">
 									<Badge variant="outline">{item.category.name}</Badge>
-									<Badge variant="secondary">{item.condition}</Badge>
+									<Badge variant="secondary">{conditionLabel}</Badge>
 									<Badge>{t('available')}</Badge>
 								</div>
 								<Separator />
@@ -140,9 +191,17 @@ export default async function ItemDetailPage({ params }: Props) {
 										{donorInitials}
 									</AvatarFallback>
 								</Avatar>
-								<span className="text-base font-semibold group-hover:underline">
-									{donorName}
-								</span>
+								<div className="grid gap-1">
+									<span className="text-base font-semibold group-hover:underline">
+										{donorName}
+									</span>
+									<Badge
+										variant="secondary"
+										className="w-fit text-xs"
+									>
+										{donorAccountTypeLabel}
+									</Badge>
+								</div>
 							</Link>
 						</div>
 
@@ -185,7 +244,7 @@ export default async function ItemDetailPage({ params }: Props) {
 									<div className="flex items-center gap-1">
 										<FavoriteButton
 											itemId={item.id}
-											isFavorited={!!favoriteRow}
+											isFavorited={Boolean(favoriteRow)}
 										/>
 										<Button
 											variant="ghost"

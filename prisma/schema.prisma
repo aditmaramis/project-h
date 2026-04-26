@@ -120,6 +120,7 @@ model Category {
 model Item {
   id          String        @id @default(cuid())
   title       String
+  slug        String
   description String
   images      String[]      // Supabase Storage URLs
   condition   ItemCondition
@@ -148,6 +149,7 @@ model Item {
   @@index([latitude, longitude])
   @@index([categoryId])
   @@index([donorId])
+  @@unique([categoryId, slug])
   @@map("items")
 }
 

@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { prisma } from '@/lib/prisma';
+import { buildItemHref } from '@/lib/item-url';
 import { buildProfileSlug, parseProfileSlug } from '@/lib/profile-url';
 
 type Props = {
@@ -63,11 +64,13 @@ export default async function PublicProfilePage({ params }: Props) {
 				select: {
 					id: true,
 					title: true,
+					slug: true,
 					images: true,
 					condition: true,
 					category: {
 						select: {
 							name: true,
+							slug: true,
 						},
 					},
 				},
@@ -197,7 +200,14 @@ export default async function PublicProfilePage({ params }: Props) {
 										<Button
 											variant="outline"
 											className="w-full"
-											render={<Link href={`/items/${item.id}`} />}
+											render={
+												<Link
+													href={buildItemHref({
+														categorySlug: item.category.slug,
+														itemSlug: item.slug,
+													})}
+												/>
+											}
 											nativeButton={false}
 										>
 											{t('viewItem')}
