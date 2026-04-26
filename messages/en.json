@@ -208,11 +208,16 @@
 		"postedBy": "Posted by {name}",
 		"available": "Available",
 		"details": "Item Details",
+		"productDetails": "Product details",
+		"donor": "Donor",
+		"itemLocation": "Item location",
+		"getInTouch": "Get in touch",
 		"postedOn": "Posted on {date}",
 		"addressUnavailable": "Address not provided",
 		"pickupMethods": "Pickup methods",
 		"pickupMethodSelfPickup": "Self pickup",
 		"pickupMethodDelivery": "Delivery",
+		"share": "Share",
 		"viewDonorProfile": "View donor profile"
 	},
 	"Chat": {

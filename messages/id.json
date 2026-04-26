@@ -208,11 +208,16 @@
 		"postedBy": "Diposting oleh {name}",
 		"available": "Tersedia",
 		"details": "Detail Barang",
+		"productDetails": "Detail produk",
+		"donor": "Donatur",
+		"itemLocation": "Lokasi barang",
+		"getInTouch": "Hubungi donor",
 		"postedOn": "Diposting pada {date}",
 		"addressUnavailable": "Alamat tidak tersedia",
 		"pickupMethods": "Metode pengambilan",
 		"pickupMethodSelfPickup": "Ambil sendiri",
 		"pickupMethodDelivery": "Diantar",
+		"share": "Bagikan",
 		"viewDonorProfile": "Lihat profil donatur"
 	},
 	"Chat": {

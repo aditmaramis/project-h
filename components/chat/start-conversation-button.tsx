@@ -9,10 +9,12 @@ export function StartConversationButton({
 	itemId,
 	participantId,
 	existingConversationId,
+	label,
 }: {
 	itemId: string;
 	participantId: string;
 	existingConversationId?: string;
+	label?: string;
 }) {
 	const router = useRouter();
 	const t = useTranslations('Chat');
@@ -57,9 +59,10 @@ export function StartConversationButton({
 			>
 				{loading
 					? t('startingConversation')
-					: existingConversationId
-						? t('openConversation')
-						: t('startConversation')}
+					: (label ??
+						(existingConversationId
+							? t('openConversation')
+							: t('startConversation')))}
 			</Button>
 			{error ? <p className="text-sm text-destructive">{error}</p> : null}
 		</div>
