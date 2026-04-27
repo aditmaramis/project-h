@@ -218,6 +218,11 @@
 		"pickupMethodSelfPickup": "Ambil sendiri",
 		"pickupMethodDelivery": "Diantar",
 		"share": "Bagikan",
+		"shareTwitter": "Bagikan di Twitter",
+		"shareInstagram": "Buka Instagram",
+		"shareLinkedIn": "Bagikan di LinkedIn",
+		"copyLink": "Salin tautan",
+		"linkCopied": "Tautan disalin",
 		"viewDonorProfile": "Lihat profil donatur"
 	},
 	"Chat": {

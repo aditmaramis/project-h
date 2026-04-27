@@ -9,9 +9,11 @@ import { cn } from '@/lib/utils';
 export function FavoriteButton({
 	itemId,
 	isFavorited,
+	className,
 }: {
 	itemId: string;
 	isFavorited: boolean;
+	className?: string;
 }) {
 	const router = useRouter();
 	const [favorited, setFavorited] = useState(isFavorited);
@@ -36,6 +38,7 @@ export function FavoriteButton({
 			size="icon"
 			className={cn(
 				'size-8 rounded-full bg-background/80 backdrop-blur-sm',
+				className,
 				favorited && 'text-red-500',
 			)}
 			onClick={toggle}

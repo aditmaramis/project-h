@@ -1,15 +1,14 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
-import { Share2 } from 'lucide-react';
 import { Link, redirect } from '@/i18n/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
 import { buildItemHref } from '@/lib/item-url';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { SocialButton } from '@/components/ui/social-button';
 import { FavoriteButton } from '@/components/dashboard/favorite-button';
 import { StartConversationButton } from '@/components/chat/start-conversation-button';
 import { ItemImageGallery } from '@/components/items/item-image-gallery';
@@ -77,7 +76,7 @@ export default async function ItemDetailPage({ params }: Props) {
 		data: { user },
 	} = await supabase.auth.getUser();
 
-	const isOwnItem = Boolean(user) && user.id === item.donorId;
+	const isOwnItem = user?.id === item.donorId;
 
 	const favoriteRow = user
 		? await prisma.favorite.findUnique({
@@ -135,7 +134,6 @@ export default async function ItemDetailPage({ params }: Props) {
 						: formatDisplayLabel(item.condition);
 	const itemPath =
 		locale === 'en' ? canonicalHref : `/${locale}${canonicalHref}`;
-	const shareHref = `mailto:?subject=${encodeURIComponent(item.title)}&body=${encodeURIComponent(`${item.title}\n${itemPath}`)}`;
 
 	return (
 		<div className="container mx-auto px-4 py-8">
@@ -235,48 +233,50 @@ export default async function ItemDetailPage({ params }: Props) {
 						<div className="grid gap-2">
 							{user && !isOwnItem ? (
 								<>
-									<StartConversationButton
-										itemId={item.id}
-										participantId={item.donorId}
-										existingConversationId={existingConversation?.id}
-										label={t('getInTouch')}
-									/>
-									<div className="flex items-center gap-1">
+									<div className="flex items-start gap-2">
+										<StartConversationButton
+											itemId={item.id}
+											participantId={item.donorId}
+											existingConversationId={existingConversation?.id}
+											label={t('getInTouch')}
+											openInWidget
+											containerClassName="flex-1"
+											buttonClassName="h-12 w-full rounded-full border border-green-600 bg-green-600 px-5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-green-700 hover:text-white dark:border-green-600 dark:bg-green-600 dark:text-white dark:hover:bg-green-700"
+										/>
 										<FavoriteButton
 											itemId={item.id}
 											isFavorited={Boolean(favoriteRow)}
+											className="h-12 w-12 rounded-full border border-zinc-200 bg-white text-zinc-600 shadow-sm transition-all hover:bg-zinc-100 hover:text-zinc-900 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
 										/>
-										<Button
-											variant="ghost"
-											size="icon"
-											className="size-8 rounded-full bg-background/80 backdrop-blur-sm"
-											render={
-												<a
-													href={shareHref}
-													aria-label={t('share')}
-												/>
-											}
-											nativeButton={false}
-										>
-											<Share2 className="size-4" />
-										</Button>
+									</div>
+									<div className="flex items-center gap-1">
+										<SocialButton
+											shareUrl={itemPath}
+											shareText={item.title}
+											labels={{
+												share: t('share'),
+												twitter: t('shareTwitter'),
+												instagram: t('shareInstagram'),
+												linkedIn: t('shareLinkedIn'),
+												copyLink: t('copyLink'),
+												copySuccess: t('linkCopied'),
+											}}
+										/>
 									</div>
 								</>
 							) : (
-								<Button
-									variant="ghost"
-									size="icon"
-									className="size-8 rounded-full bg-background/80 backdrop-blur-sm"
-									render={
-										<a
-											href={shareHref}
-											aria-label={t('share')}
-										/>
-									}
-									nativeButton={false}
-								>
-									<Share2 className="size-4" />
-								</Button>
+								<SocialButton
+									shareUrl={itemPath}
+									shareText={item.title}
+									labels={{
+										share: t('share'),
+										twitter: t('shareTwitter'),
+										instagram: t('shareInstagram'),
+										linkedIn: t('shareLinkedIn'),
+										copyLink: t('copyLink'),
+										copySuccess: t('linkCopied'),
+									}}
+								/>
 							)}
 						</div>
 					</CardContent>

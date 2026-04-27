@@ -9,6 +9,10 @@ import ChatInterface, {
 	type Message as ChatMessage,
 	type UiConfig as ChatUiConfig,
 } from '@/components/chat/chat-interface';
+import {
+	OPEN_FLOATING_CHAT_WIDGET_EVENT,
+	type OpenFloatingChatWidgetDetail,
+} from '@/components/chat/floating-chat-events';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -332,6 +336,17 @@ export function FloatingChatWidget({ userId }: Props) {
 		}
 	}, []);
 
+	const handleSelectConversation = useCallback(
+		async (conversationId: string) => {
+			setActiveConversationId(conversationId);
+			setComposerValue('');
+			setSendingError(null);
+			await loadConversationThread(conversationId);
+			void markConversationAsRead(conversationId);
+		},
+		[loadConversationThread, markConversationAsRead],
+	);
+
 	const handleRealtimeMessage = useCallback(
 		(payload: RealtimeMessageRow) => {
 			let shouldReloadConversations = false;
@@ -437,16 +452,37 @@ export function FloatingChatWidget({ userId }: Props) {
 		loadConversationThread,
 	]);
 
+	useEffect(() => {
+		if (isChatRoute) return;
+
+		const handleOpenWidget = (event: Event) => {
+			const customEvent = event as CustomEvent<OpenFloatingChatWidgetDetail>;
+			const conversationId = customEvent.detail?.conversationId;
+
+			setOpen(true);
+
+			if (!conversationId) {
+				return;
+			}
+
+			void handleSelectConversation(conversationId);
+		};
+
+		window.addEventListener(
+			OPEN_FLOATING_CHAT_WIDGET_EVENT,
+			handleOpenWidget as EventListener,
+		);
+
+		return () => {
+			window.removeEventListener(
+				OPEN_FLOATING_CHAT_WIDGET_EVENT,
+				handleOpenWidget as EventListener,
+			);
+		};
+	}, [handleSelectConversation, isChatRoute]);
+
 	if (isChatRoute) {
 		return null;
-	}
-
-	async function handleSelectConversation(conversationId: string) {
-		setActiveConversationId(conversationId);
-		setComposerValue('');
-		setSendingError(null);
-		await loadConversationThread(conversationId);
-		void markConversationAsRead(conversationId);
 	}
 
 	async function handleSendMessage(e: React.FormEvent) {

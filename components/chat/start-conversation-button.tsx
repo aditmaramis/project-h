@@ -3,18 +3,26 @@
 import { useState } from 'react';
 import { useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
+import { openFloatingChatWidget } from '@/components/chat/floating-chat-events';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 export function StartConversationButton({
 	itemId,
 	participantId,
 	existingConversationId,
 	label,
+	openInWidget = false,
+	containerClassName,
+	buttonClassName,
 }: {
 	itemId: string;
 	participantId: string;
 	existingConversationId?: string;
 	label?: string;
+	openInWidget?: boolean;
+	containerClassName?: string;
+	buttonClassName?: string;
 }) {
 	const router = useRouter();
 	const t = useTranslations('Chat');
@@ -25,6 +33,11 @@ export function StartConversationButton({
 		setError(null);
 
 		if (existingConversationId) {
+			if (openInWidget) {
+				openFloatingChatWidget({ conversationId: existingConversationId });
+				return;
+			}
+
 			router.push(`/chat/${existingConversationId}`);
 			return;
 		}
@@ -48,12 +61,18 @@ export function StartConversationButton({
 			return;
 		}
 
+		if (openInWidget) {
+			openFloatingChatWidget({ conversationId: data.id });
+			return;
+		}
+
 		router.push(`/chat/${data.id}`);
 	}
 
 	return (
-		<div className="grid gap-2">
+		<div className={cn('grid gap-2', containerClassName)}>
 			<Button
+				className={buttonClassName}
 				onClick={handleStartConversation}
 				disabled={loading}
 			>

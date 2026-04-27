@@ -218,6 +218,11 @@
 		"pickupMethodSelfPickup": "Self pickup",
 		"pickupMethodDelivery": "Delivery",
 		"share": "Share",
+		"shareTwitter": "Share on Twitter",
+		"shareInstagram": "Open Instagram",
+		"shareLinkedIn": "Share on LinkedIn",
+		"copyLink": "Copy link",
+		"linkCopied": "Link copied",
 		"viewDonorProfile": "View donor profile"
 	},
 	"Chat": {
