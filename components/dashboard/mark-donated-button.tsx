@@ -80,6 +80,7 @@ export function MarkDonatedButton({
 					<Button
 						variant="ghost"
 						size="icon"
+						className="cursor-pointer"
 						title={t('markDonated')}
 					/>
 				}

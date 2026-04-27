@@ -70,7 +70,7 @@ export default async function DashboardPage({ params }: Props) {
 		}),
 		prisma.item.count({ where: { donorId: user.id } }),
 		prisma.item.count({
-			where: { donorId: user.id, status: 'AVAILABLE' },
+			where: { donorId: user.id, status: { in: ['AVAILABLE', 'RESERVED'] } },
 		}),
 		prisma.item.count({
 			where: { donorId: user.id, status: 'DONATED' },

@@ -13,9 +13,9 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog';
-import { Trash2 } from 'lucide-react';
+import { PackageCheck } from 'lucide-react';
 
-export function DeleteItemButton({
+export function MarkAvailableButton({
 	itemId,
 	itemTitle,
 }: {
@@ -27,10 +27,12 @@ export function DeleteItemButton({
 	const [open, setOpen] = useState(false);
 	const [loading, setLoading] = useState(false);
 
-	async function handleDelete() {
+	async function handleMarkAvailable() {
 		setLoading(true);
 		const res = await fetch(`/api/items/${itemId}`, {
-			method: 'DELETE',
+			method: 'PATCH',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ status: 'AVAILABLE' }),
 		});
 		setLoading(false);
 
@@ -51,19 +53,20 @@ export function DeleteItemButton({
 						variant="ghost"
 						size="icon"
 						className="cursor-pointer"
-						title={t('deleteItem')}
+						title={t('markAvailable')}
 					/>
 				}
 			>
-				<Trash2 className="size-4" />
+				<PackageCheck className="size-4" />
 			</DialogTrigger>
 			<DialogContent>
 				<DialogHeader>
-					<DialogTitle>{t('deleteItem')}</DialogTitle>
+					<DialogTitle>{t('markAvailable')}</DialogTitle>
 					<DialogDescription>
-						{t('confirmDelete')} {itemTitle}. {t('confirmDeleteDescription')}
+						{t('markAvailableDescription')} {itemTitle}.
 					</DialogDescription>
 				</DialogHeader>
+
 				<DialogFooter>
 					<Button
 						variant="outline"
@@ -72,11 +75,10 @@ export function DeleteItemButton({
 						{t('cancel')}
 					</Button>
 					<Button
-						variant="destructive"
-						onClick={handleDelete}
+						onClick={handleMarkAvailable}
 						disabled={loading}
 					>
-						{loading ? t('saving') : t('deleteItem')}
+						{loading ? t('saving') : t('markAsAvailable')}
 					</Button>
 				</DialogFooter>
 			</DialogContent>

@@ -25,6 +25,7 @@ import { createItemSchema, updateItemSchema } from '@/lib/validators/items';
 import type { Category } from '@/types';
 
 type PickupMethod = 'SELF_PICKUP' | 'DELIVERY';
+type ItemStatus = 'AVAILABLE' | 'RESERVED' | 'DONATED';
 
 type Props = {
 	categories: Category[];
@@ -39,7 +40,7 @@ type Props = {
 		longitude: number;
 		address: string | null;
 		images: string[];
-		status?: string;
+		status?: ItemStatus;
 	};
 };
 
@@ -68,6 +69,9 @@ export function ItemForm({ categories, initialData }: Props) {
 	const [longitude, setLongitude] = useState(initialData?.longitude ?? 0);
 	const [address, setAddress] = useState(initialData?.address ?? '');
 	const [images, setImages] = useState<string[]>(initialData?.images ?? []);
+	const [status, setStatus] = useState<ItemStatus>(
+		initialData?.status ?? 'AVAILABLE',
+	);
 	const [uploading, setUploading] = useState(false);
 	const [saving, setSaving] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -128,6 +132,17 @@ export function ItemForm({ categories, initialData }: Props) {
 		}
 
 		return formatDisplayLabel(category.name);
+	}
+
+	function getStatusLabel(value: ItemStatus) {
+		switch (value) {
+			case 'AVAILABLE':
+				return t('available');
+			case 'RESERVED':
+				return t('reserved');
+			case 'DONATED':
+				return t('donated');
+		}
 	}
 
 	function togglePickupMethod(method: PickupMethod, checked: boolean) {
@@ -343,6 +358,7 @@ export function ItemForm({ categories, initialData }: Props) {
 			longitude,
 			address: address || undefined,
 			images,
+			...(isEditing ? { status } : {}),
 		};
 
 		const schema = isEditing ? updateItemSchema : createItemSchema;
@@ -458,6 +474,24 @@ export function ItemForm({ categories, initialData }: Props) {
 								</SelectContent>
 							</Select>
 						</div>
+						{isEditing && (
+							<div className="grid gap-2 sm:col-span-2">
+								<Label>{t('status')}</Label>
+								<Select
+									value={status}
+									onValueChange={(v) => setStatus(v as ItemStatus)}
+								>
+									<SelectTrigger className={formSelectTriggerClassName}>
+										<SelectValue>{getStatusLabel(status)}</SelectValue>
+									</SelectTrigger>
+									<SelectContent className={formSelectContentClassName}>
+										<SelectItem value="AVAILABLE">{t('available')}</SelectItem>
+										<SelectItem value="RESERVED">{t('reserved')}</SelectItem>
+										<SelectItem value="DONATED">{t('donated')}</SelectItem>
+									</SelectContent>
+								</Select>
+							</div>
+						)}
 					</div>
 					<div className="grid gap-2">
 						<Label>{t('pickupMethods')}</Label>

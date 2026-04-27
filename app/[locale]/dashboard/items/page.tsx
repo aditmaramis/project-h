@@ -16,7 +16,9 @@ import {
 	TableRow,
 } from '@/components/ui/table';
 import { Plus, Pencil } from 'lucide-react';
+import { MarkAvailableButton } from '@/components/dashboard/mark-available-button';
 import { MarkDonatedButton } from '@/components/dashboard/mark-donated-button';
+import { MarkReservedButton } from '@/components/dashboard/mark-reserved-button';
 import { DeleteItemButton } from '@/components/dashboard/delete-item-button';
 import { buildItemHref } from '@/lib/item-url';
 
@@ -145,7 +147,7 @@ export default async function MyItemsPage({ params }: Props) {
 									</TableCell>
 									<TableCell className="text-right">
 										<div className="flex items-center justify-end gap-1">
-											{item.status === 'AVAILABLE' && (
+											{item.status !== 'DONATED' && (
 												<>
 													<Button
 														variant="ghost"
@@ -157,6 +159,18 @@ export default async function MyItemsPage({ params }: Props) {
 													>
 														<Pencil className="size-4" />
 													</Button>
+													{item.status === 'AVAILABLE' && (
+														<MarkReservedButton
+															itemId={item.id}
+															itemTitle={item.title}
+														/>
+													)}
+													{item.status === 'RESERVED' && (
+														<MarkAvailableButton
+															itemId={item.id}
+															itemTitle={item.title}
+														/>
+													)}
 													<MarkDonatedButton
 														itemId={item.id}
 														itemTitle={item.title}
