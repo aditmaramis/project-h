@@ -1,4 +1,4 @@
-import { Gift } from 'lucide-react';
+import Image from 'next/image';
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { HeaderAuth } from '@/components/layout/header-auth';
@@ -27,10 +27,17 @@ export async function Header() {
 			<div className="container mx-auto flex h-14 items-center gap-4 px-4">
 				<Link
 					href="/"
-					className="flex shrink-0 items-center gap-2 font-bold text-xl"
+					className="flex shrink-0 items-center"
 				>
-					<Gift className="h-5 w-5" />
-					{t('brand')}
+					<Image
+						src="/logo.svg"
+						alt={t('brand')}
+						width={200}
+						height={100}
+						className="h-9 w-auto md:h-10"
+						priority
+					/>
+					<span className="sr-only">{t('brand')}</span>
 				</Link>
 				<HeaderCategories />
 				<div className="flex flex-1 justify-center">
