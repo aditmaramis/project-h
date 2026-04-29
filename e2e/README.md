@@ -6,7 +6,19 @@ This suite covers high-value auth regression paths:
 
 - Admin login redirects to `/admin`
 - Regular user login does not redirect to `/admin`
+- Protected route redirect (`/dashboard`) round-trips through `redirectTo` after login
 - Logout does not append `?redirectTo=` query
+
+## Reusable auth fixture
+
+Use `e2e/fixtures/auth.ts` for worker-scoped seeded sessions:
+
+- `adminPage`
+- `userPage`
+- `adminCredential`
+- `userCredential`
+
+This avoids repeated full login flows in every test and speeds up future suites.
 
 ## Required environment variables
 

@@ -366,6 +366,7 @@ npm run db:studio    # Open Prisma Studio
 
 - Framework: Playwright (`@playwright/test`) with config in `playwright.config.ts`
 - Test location: `e2e/` (current smoke coverage in `e2e/auth-redirect.spec.ts`)
+- Reusable fixture: `e2e/fixtures/auth.ts` provides worker-scoped seeded auth states (`adminPage`, `userPage`, credentials)
 - Selector strategy: prefer stable `data-testid` attributes for auth/menu interactions
 - Required env vars for auth smoke tests:
   - `E2E_ADMIN_EMAIL`
@@ -378,6 +379,7 @@ npm run db:studio    # Open Prisma Studio
   - Use `expect`/`expect.poll` assertions instead of fixed delays
   - Avoid brittle text-only selectors for translated UI
   - Keep PR checks to Chromium; run cross-browser expansion only when needed
+- CI workflow: `.github/workflows/e2e-smoke.yml` runs smoke E2E on pull requests to `main`
 
 ---
 

@@ -56,6 +56,7 @@ Features:
 - Server-side fallback (2026-04-29): authenticated `ADMIN` users are redirected from `/dashboard` to `/admin` in dashboard layout (`app/[locale]/dashboard/layout.tsx`)
 - Logout redirect cleanup (2026-04-29): sign-out now navigates to `/` to prevent `/?redirectTo=%2Fadmin` after admin logout (`components/layout/header-auth.tsx`, `components/logout-button.tsx`)
 - Playwright E2E smoke coverage (2026-04-29): added auth redirect/logout regression checks in `e2e/auth-redirect.spec.ts` with stable auth/menu test IDs
+- Playwright reliability upgrade (2026-04-29): added protected-route `redirectTo` roundtrip smoke test, reusable auth fixture (`e2e/fixtures/auth.ts`), and PR workflow (`.github/workflows/e2e-smoke.yml`)
 
 ## Phase 5: Banned Keywords — NOT STARTED
 
