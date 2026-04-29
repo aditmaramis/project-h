@@ -13,7 +13,7 @@
 - Seed: `prisma/seed.ts` promotes `ADMIN_EMAIL` to ADMIN role
 - Docs: `/.instructions/database-patterns.md`, updated `AGENTS.md` and `repo-notes.md`
 
-## Phase 2: User Management — IN PROGRESS
+## Phase 2: User Management ✅ COMPLETE
 
 Page: `app/[locale]/admin/users/page.tsx`
 
