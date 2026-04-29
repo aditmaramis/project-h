@@ -38,7 +38,7 @@ Implemented kickoff (2026-04-29):
 - Validation: extended `lib/validators/admin.ts` with `adminUsersQuerySchema` and `updateAdminUserSchema`
 - Schema: `AdminActionType` now includes `PROMOTE_USER` and `DEMOTE_USER` for dedicated role-change audit logs
 
-## Phase 3: Content Moderation — NOT STARTED
+## Phase 3: Content Moderation — IN PROGRESS
 
 Page: `app/[locale]/admin/content/page.tsx`
 
@@ -51,6 +51,15 @@ Features:
 - Actions: edit item fields, delete item, change status
 - All actions create `AdminAction` audit entries
 - API routes: `app/api/admin/items/route.ts` (GET list), `app/api/admin/items/[id]/route.ts` (PATCH/DELETE)
+
+Implemented kickoff (2026-04-29):
+
+- Page: `app/[locale]/admin/content/page.tsx` (SSR table with search/filter/sort/pagination and category/status chips)
+- Component: `components/admin/content-management-actions.tsx` (item detail sheet, status toggles, edit dialog, delete confirmation)
+- API: `app/api/admin/items/route.ts` (GET list)
+- API: `app/api/admin/items/[id]/route.ts` (GET details + PATCH edit/status + DELETE with reason)
+- Validation: extended `lib/validators/admin.ts` with `adminItemsQuerySchema`, `updateAdminItemSchema`, and `deleteAdminItemSchema`
+- i18n: expanded `Admin` namespace in `messages/en.json` and `messages/id.json` for content moderation copy
 
 ## Phase 4: Reports System ✅ COMPLETE
 
