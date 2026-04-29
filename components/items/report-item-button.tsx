@@ -21,15 +21,12 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 
-const reportReasons = [
-	'SPAM',
-	'SCAM',
-	'WRONG_CATEGORY',
-	'INAPPROPRIATE',
-	'OTHER',
-] as const;
-
-type ReportReason = (typeof reportReasons)[number];
+type ReportReason =
+	| 'SPAM'
+	| 'SCAM'
+	| 'WRONG_CATEGORY'
+	| 'INAPPROPRIATE'
+	| 'OTHER';
 
 export function ReportItemButton({ itemId }: { itemId: string }) {
 	const t = useTranslations('Items');

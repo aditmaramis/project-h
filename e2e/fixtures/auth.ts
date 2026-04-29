@@ -77,7 +77,7 @@ export const test = base.extend<AuthFixtures, AuthWorkerFixtures>({
 			const storageStatePath = path.join(
 				testInfo.project.outputDir,
 				'.auth',
-				'admin.json',
+				`admin-${testInfo.parallelIndex}.json`,
 			);
 
 			await ensureStorageState(
@@ -95,7 +95,7 @@ export const test = base.extend<AuthFixtures, AuthWorkerFixtures>({
 			const storageStatePath = path.join(
 				testInfo.project.outputDir,
 				'.auth',
-				'user.json',
+				`user-${testInfo.parallelIndex}.json`,
 			);
 
 			await ensureStorageState(
@@ -108,20 +108,20 @@ export const test = base.extend<AuthFixtures, AuthWorkerFixtures>({
 		},
 		{ scope: 'worker' },
 	],
-	adminPage: async ({ browser, adminStorageStatePath }, use) => {
+	adminPage: async ({ browser, adminStorageStatePath }, runPage) => {
 		const context = await browser.newContext({
 			storageState: adminStorageStatePath,
 		});
 		const page = await context.newPage();
-		await use(page);
+		await runPage(page);
 		await context.close();
 	},
-	userPage: async ({ browser, userStorageStatePath }, use) => {
+	userPage: async ({ browser, userStorageStatePath }, runPage) => {
 		const context = await browser.newContext({
 			storageState: userStorageStatePath,
 		});
 		const page = await context.newPage();
-		await use(page);
+		await runPage(page);
 		await context.close();
 	},
 });

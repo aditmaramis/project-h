@@ -8,13 +8,10 @@ import { useGeolocation } from '@/hooks/use-geolocation';
 export function HeaderLocation() {
 	const { latitude, longitude, loading, error } = useGeolocation();
 	const [locationName, setLocationName] = useState<string | null>(null);
-	const [resolving, setResolving] = useState(false);
 	const t = useTranslations('Location');
 
 	useEffect(() => {
 		if (!latitude || !longitude) return;
-
-		setResolving(true);
 
 		const controller = new AbortController();
 
@@ -39,15 +36,13 @@ export function HeaderLocation() {
 			})
 			.catch(() => {
 				setLocationName(t('fallback'));
-			})
-			.finally(() => {
-				setResolving(false);
 			});
 
 		return () => controller.abort();
 	}, [latitude, longitude, t]);
 
-	const isLoading = loading || resolving;
+	const isLoading =
+		loading || (Boolean(latitude && longitude) && !locationName);
 
 	if (error && !isLoading) {
 		return (

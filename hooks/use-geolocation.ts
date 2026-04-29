@@ -27,13 +27,16 @@ export function useGeolocation() {
 		didRun.current = true;
 
 		if (!navigator.geolocation) {
-			setState({
-				latitude: null,
-				longitude: null,
-				error: 'Geolocation is not supported by your browser',
-				loading: false,
-			});
-			return;
+			const timeoutId = window.setTimeout(() => {
+				setState({
+					latitude: null,
+					longitude: null,
+					error: 'Geolocation is not supported by your browser',
+					loading: false,
+				});
+			}, 0);
+
+			return () => window.clearTimeout(timeoutId);
 		}
 
 		navigator.geolocation.getCurrentPosition(

@@ -1,4 +1,5 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+import Image, { type ImageLoader } from 'next/image';
 import { Link } from '@/i18n/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
@@ -10,6 +11,8 @@ import { FavoriteButton } from '@/components/dashboard/favorite-button';
 type Props = {
 	params: Promise<{ locale: string }>;
 };
+
+const passthroughImageLoader: ImageLoader = ({ src }) => src;
 
 export default async function BrowseItemsPage({ params }: Props) {
 	const { locale } = await params;
@@ -60,9 +63,13 @@ export default async function BrowseItemsPage({ params }: Props) {
 							>
 								<div className="relative aspect-4/3 bg-muted">
 									{item.images[0] ? (
-										<img
+										<Image
 											src={item.images[0]}
 											alt={item.title}
+											loader={passthroughImageLoader}
+											unoptimized
+											fill
+											sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
 											className="size-full object-cover"
 										/>
 									) : null}

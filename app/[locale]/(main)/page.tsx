@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { FeaturedCarousel } from '@/components/featured-carousel';
 import {
@@ -290,8 +289,8 @@ export default function HomePage() {
 								style={{ color: 'oklch(0.88 0.01 85)' }}
 							>
 								We built Hibah because we believe communities thrive when
-								neighbors help each other. What's surplus to you could be
-								essential to someone down the street. We're just the
+								neighbors help each other. What&apos;s surplus to you could be
+								essential to someone down the street. We&apos;re just the
 								introduction.
 							</p>
 						</div>

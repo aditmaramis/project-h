@@ -1,6 +1,11 @@
 'use client';
 
-import { type ReactElement, useState } from 'react';
+import {
+	cloneElement,
+	type MouseEvent,
+	type ReactElement,
+	useState,
+} from 'react';
 import { useTranslations } from 'next-intl';
 import {
 	Dialog,
@@ -8,7 +13,6 @@ import {
 	DialogDescription,
 	DialogHeader,
 	DialogTitle,
-	DialogTrigger,
 } from '@/components/ui/dialog';
 import { LoginForm } from '@/components/login-form';
 import { SignupForm } from '@/components/signup-form';
@@ -24,6 +28,14 @@ export function AuthModal({ mode, trigger }: AuthModalProps) {
 	const t = useTranslations('Auth');
 
 	const isLogin = activeMode === 'login';
+	const triggerWithHandler = cloneElement(trigger, {
+		onClick: (event: MouseEvent<HTMLElement>) => {
+			trigger.props.onClick?.(event);
+			if (!event.defaultPrevented) {
+				setOpen(true);
+			}
+		},
+	});
 
 	function handleOpenChange(nextOpen: boolean) {
 		setOpen(nextOpen);
@@ -37,7 +49,7 @@ export function AuthModal({ mode, trigger }: AuthModalProps) {
 			open={open}
 			onOpenChange={handleOpenChange}
 		>
-			<DialogTrigger render={trigger} />
+			{triggerWithHandler}
 			<DialogContent
 				className={
 					isLogin

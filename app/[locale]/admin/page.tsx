@@ -165,6 +165,8 @@ export default async function AdminOverviewPage({ params }: Props) {
 		BAN_USER: t('actionBanUser'),
 		UNBAN_USER: t('actionUnbanUser'),
 		WARN_USER: t('actionWarnUser'),
+		PROMOTE_USER: t('actionPromoteUser'),
+		DEMOTE_USER: t('actionDemoteUser'),
 		DELETE_ITEM: t('actionDeleteItem'),
 		EDIT_ITEM: t('actionEditItem'),
 		RESOLVE_REPORT: t('actionResolveReport'),
@@ -173,7 +175,25 @@ export default async function AdminOverviewPage({ params }: Props) {
 		REMOVE_KEYWORD: t('actionRemoveKeyword'),
 	};
 
-	function TrendIcon({ value }: { value: number }) {
+	function getActionLabel(actionType: string, details: string | null) {
+		if (actionType === 'WARN_USER' && details) {
+			try {
+				const parsed = JSON.parse(details) as { kind?: string };
+				if (parsed.kind === 'PROMOTE_USER') {
+					return t('actionPromoteUser');
+				}
+				if (parsed.kind === 'DEMOTE_USER') {
+					return t('actionDemoteUser');
+				}
+			} catch {
+				// Ignore invalid JSON and fall back to action type labels.
+			}
+		}
+
+		return actionLabels[actionType] ?? actionType;
+	}
+
+	function renderTrendIcon(value: number) {
 		if (value > 0) return <TrendingUp className="size-3.5 text-emerald-600" />;
 		if (value < 0) return <TrendingDown className="size-3.5 text-red-500" />;
 		return <Minus className="size-3.5 text-muted-foreground" />;
@@ -207,7 +227,7 @@ export default async function AdminOverviewPage({ params }: Props) {
 								{totalUsers.toLocaleString()}
 							</div>
 							<div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
-								<TrendIcon value={userGrowthPct} />
+								{renderTrendIcon(userGrowthPct)}
 								<span
 									className={
 										userGrowthPct > 0
@@ -260,7 +280,7 @@ export default async function AdminOverviewPage({ params }: Props) {
 								{totalItems.toLocaleString()}
 							</div>
 							<div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
-								<TrendIcon value={itemGrowthPct} />
+								{renderTrendIcon(itemGrowthPct)}
 								<span
 									className={
 										itemGrowthPct > 0
@@ -438,8 +458,10 @@ export default async function AdminOverviewPage({ params }: Props) {
 															{action.admin.name ?? 'Admin'}
 														</span>{' '}
 														<span className="text-muted-foreground">
-															{actionLabels[action.actionType] ??
-																action.actionType}
+															{getActionLabel(
+																action.actionType,
+																action.details,
+															)}
 														</span>
 													</p>
 													<p className="text-xs text-muted-foreground mt-0.5">

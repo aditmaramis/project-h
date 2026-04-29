@@ -13,7 +13,7 @@
 - Seed: `prisma/seed.ts` promotes `ADMIN_EMAIL` to ADMIN role
 - Docs: `/.instructions/database-patterns.md`, updated `AGENTS.md` and `repo-notes.md`
 
-## Phase 2: User Management — NOT STARTED
+## Phase 2: User Management — IN PROGRESS
 
 Page: `app/[locale]/admin/users/page.tsx`
 
@@ -27,6 +27,16 @@ Features:
 - Actions: ban/unban (with reason), warn, promote/demote role
 - All actions create `AdminAction` audit entries
 - API routes: `app/api/admin/users/route.ts` (GET list), `app/api/admin/users/[id]/route.ts` (PATCH ban/role)
+
+Implemented kickoff (2026-04-29):
+
+- Page: `app/[locale]/admin/users/page.tsx` (SSR table with search, filters, sorting, pagination)
+- Component: `components/admin/user-management-actions.tsx` (detail sheet + moderation actions)
+- Component: `components/admin/user-bulk-actions.tsx` (bulk warn/ban/unban on current filtered page)
+- API: `app/api/admin/users/route.ts` (GET list)
+- API: `app/api/admin/users/[id]/route.ts` (GET rich details + PATCH ban/unban/warn/set role)
+- Validation: extended `lib/validators/admin.ts` with `adminUsersQuerySchema` and `updateAdminUserSchema`
+- Schema: `AdminActionType` now includes `PROMOTE_USER` and `DEMOTE_USER` for dedicated role-change audit logs
 
 ## Phase 3: Content Moderation — NOT STARTED
 
@@ -57,6 +67,7 @@ Features:
 - Logout redirect cleanup (2026-04-29): sign-out now navigates to `/` to prevent `/?redirectTo=%2Fadmin` after admin logout (`components/layout/header-auth.tsx`, `components/logout-button.tsx`)
 - Playwright E2E smoke coverage (2026-04-29): added auth redirect/logout regression checks in `e2e/auth-redirect.spec.ts` with stable auth/menu test IDs
 - Playwright reliability upgrade (2026-04-29): added protected-route `redirectTo` roundtrip smoke test, reusable auth fixture (`e2e/fixtures/auth.ts`), and PR workflow (`.github/workflows/e2e-smoke.yml`)
+- Admin user-management E2E coverage (2026-04-29): added `e2e/admin-user-management.spec.ts` for warn/ban/unban/role-toggle flows and self-demotion guard assertions
 
 ## Phase 5: Banned Keywords — NOT STARTED
 
