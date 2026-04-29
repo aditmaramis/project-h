@@ -12,6 +12,7 @@ import { SocialButton } from '@/components/ui/social-button';
 import { FavoriteButton } from '@/components/dashboard/favorite-button';
 import { StartConversationButton } from '@/components/chat/start-conversation-button';
 import { ItemImageGallery } from '@/components/items/item-image-gallery';
+import { ReportItemButton } from '@/components/items/report-item-button';
 import { buildProfileHref } from '@/lib/profile-url';
 
 type Props = {
@@ -167,6 +168,12 @@ export default async function ItemDetailPage({ params }: Props) {
 											}).format(item.createdAt),
 										})}
 									</p>
+									<Separator />
+									{!isOwnItem ? (
+										<div className="flex justify-end">
+											<ReportItemButton itemId={item.id} />
+										</div>
+									) : null}
 								</div>
 							</div>
 						</div>
