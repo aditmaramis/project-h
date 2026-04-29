@@ -77,6 +77,7 @@ Implemented kickoff (2026-04-29):
 - Playwright E2E smoke coverage (2026-04-29): added auth redirect/logout regression checks in `e2e/auth-redirect.spec.ts` with stable auth/menu test IDs
 - Playwright reliability upgrade (2026-04-29): added protected-route `redirectTo` roundtrip smoke test, reusable auth fixture (`e2e/fixtures/auth.ts`), and PR workflow (`.github/workflows/e2e-smoke.yml`)
 - Admin user-management E2E coverage (2026-04-29): added `e2e/admin-user-management.spec.ts` for warn/ban/unban/role-toggle flows and self-demotion guard assertions
+- Admin content moderation E2E + UX hardening (2026-04-29): added `e2e/admin-content-management.spec.ts` for search/filter/status/edit/delete flows, plus strengthened edit/delete dialog validation and stable test IDs in `components/admin/content-management-actions.tsx` and `app/[locale]/admin/content/page.tsx`
 
 ## Phase 5: Banned Keywords — NOT STARTED
 

@@ -1,5 +1,5 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
-import Image, { type ImageLoader } from 'next/image';
+import Image from 'next/image';
 import { redirect } from '@/i18n/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
@@ -26,8 +26,6 @@ import { buildItemHref } from '@/lib/item-url';
 type Props = {
 	params: Promise<{ locale: string }>;
 };
-
-const passthroughImageLoader: ImageLoader = ({ src }) => src;
 
 const statusVariant = {
 	AVAILABLE: 'default',
@@ -108,7 +106,6 @@ export default async function MyItemsPage({ params }: Props) {
 											<Image
 												src={item.images[0]}
 												alt=""
-												loader={passthroughImageLoader}
 												unoptimized
 												width={40}
 												height={40}

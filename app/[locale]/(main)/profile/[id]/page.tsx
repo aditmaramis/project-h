@@ -1,5 +1,5 @@
 import { CalendarDays, Package } from 'lucide-react';
-import Image, { type ImageLoader } from 'next/image';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Link, redirect } from '@/i18n/navigation';
@@ -14,8 +14,6 @@ import { buildProfileSlug, parseProfileSlug } from '@/lib/profile-url';
 type Props = {
 	params: Promise<{ locale: string; id: string }>;
 };
-
-const passthroughImageLoader: ImageLoader = ({ src }) => src;
 
 export async function generateMetadata({ params }: Props) {
 	const { locale } = await params;
@@ -189,7 +187,6 @@ export default async function PublicProfilePage({ params }: Props) {
 												<Image
 													src={item.images[0]}
 													alt={item.title}
-													loader={passthroughImageLoader}
 													unoptimized
 													fill
 													sizes="(min-width: 640px) 50vw, 100vw"

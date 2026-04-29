@@ -9,7 +9,7 @@ import React, {
 } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { Link2 } from 'lucide-react';
-import Image, { type ImageLoader } from 'next/image';
+import Image from 'next/image';
 
 export interface LoaderConfig {
 	enabled: boolean;
@@ -119,8 +119,6 @@ const hexToRgba = (hex: string, alpha: number): string => {
 	const b = Number.parseInt(hex.slice(5, 7), 16);
 	return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
-
-const passthroughImageLoader: ImageLoader = ({ src }) => src;
 
 const TRANSPARENT_PIXEL =
 	'data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA=';
@@ -279,7 +277,6 @@ const MessageBubble = React.memo<MessageBubbleProps>(
 									<Image
 										src={safeImageSrc(message.content)}
 										alt={message.imageAlt ?? ''}
-										loader={passthroughImageLoader}
 										unoptimized
 										width={192}
 										height={192}
@@ -412,7 +409,6 @@ const MessageWrapper = React.memo<MessageWrapperProps>(
 							<Image
 								src={safeImageSrc(person.avatar)}
 								alt={person.name}
-								loader={passthroughImageLoader}
 								unoptimized
 								fill
 								sizes="32px"

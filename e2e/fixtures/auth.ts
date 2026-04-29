@@ -53,8 +53,11 @@ async function ensureStorageState(
 	await page.goto(baseURL);
 	await loginThroughModal(page, credential);
 	await expect
-		.poll(() => new URL(page.url()).pathname)
-		.not.toMatch(/^\/(?:id\/)?$/);
+		.poll(async () => {
+			const response = await page.request.get(`${baseURL}/api/profile`);
+			return response.status();
+		})
+		.toBe(200);
 	await context.storageState({ path: storageStatePath });
 	await context.close();
 }

@@ -1,5 +1,5 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
-import Image, { type ImageLoader } from 'next/image';
+import Image from 'next/image';
 import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
 import { redirect } from '@/i18n/navigation';
@@ -27,8 +27,6 @@ import {
 type Props = {
 	params: Promise<{ locale: string }>;
 };
-
-const passthroughImageLoader: ImageLoader = ({ src }) => src;
 
 function getGreetingKey(hour: number): string {
 	if (hour < 12) return 'greetingMorning';
@@ -201,7 +199,6 @@ export default async function DashboardPage({ params }: Props) {
 											<Image
 												src={item.images[0]}
 												alt={item.title}
-												loader={passthroughImageLoader}
 												unoptimized
 												width={48}
 												height={48}

@@ -561,6 +561,7 @@ export function FloatingChatWidget({ userId }: Props) {
 			onOpenChange={setOpen}
 		>
 			<Button
+				data-testid="floating-chat-open-button"
 				type="button"
 				size="icon"
 				className="fixed right-4 bottom-[calc(env(safe-area-inset-bottom)+1rem)] z-50 size-12 rounded-full shadow-lg sm:right-5"

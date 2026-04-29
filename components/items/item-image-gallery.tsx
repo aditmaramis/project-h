@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import Image, { type ImageLoader } from 'next/image';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
@@ -17,8 +17,6 @@ type ItemImageGalleryProps = {
 	images: string[];
 	title: string;
 };
-
-const passthroughImageLoader: ImageLoader = ({ src }) => src;
 
 function getRenderableImages(images: string[]) {
 	return images
@@ -77,7 +75,6 @@ export function ItemImageGallery({ images, title }: ItemImageGalleryProps) {
 								<Image
 									src={image}
 									alt={title}
-									loader={passthroughImageLoader}
 									unoptimized
 									fill
 									sizes="300px"
@@ -116,7 +113,6 @@ export function ItemImageGallery({ images, title }: ItemImageGalleryProps) {
 								<Image
 									src={image}
 									alt={title}
-									loader={passthroughImageLoader}
 									unoptimized
 									fill
 									sizes="96px"

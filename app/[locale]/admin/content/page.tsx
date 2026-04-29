@@ -271,6 +271,7 @@ export default async function AdminContentPage({
 					<CardContent className="space-y-4">
 						<form className="flex flex-col gap-2 sm:flex-row">
 							<Input
+								data-testid="admin-content-search-input"
 								name="search"
 								defaultValue={query.search ?? ''}
 								placeholder={t('contentSearchPlaceholder')}
@@ -300,7 +301,12 @@ export default async function AdminContentPage({
 								name="limit"
 								value={query.limit}
 							/>
-							<Button type="submit">{t('searchItems')}</Button>
+							<Button
+								data-testid="admin-content-search-submit"
+								type="submit"
+							>
+								{t('searchItems')}
+							</Button>
 							<Button
 								render={<Link href="/admin/content" />}
 								nativeButton={false}
@@ -460,7 +466,10 @@ export default async function AdminContentPage({
 				<Card>
 					<CardContent className="p-0">
 						{items.length === 0 ? (
-							<p className="p-6 text-sm text-muted-foreground">
+							<p
+								data-testid="admin-content-empty-state"
+								className="p-6 text-sm text-muted-foreground"
+							>
 								{t('noItemsFound')}
 							</p>
 						) : (
@@ -478,7 +487,13 @@ export default async function AdminContentPage({
 								</TableHeader>
 								<TableBody>
 									{items.map((item) => (
-										<TableRow key={item.id}>
+										<TableRow
+											key={item.id}
+											data-testid="admin-content-row"
+											data-item-id={item.id}
+											data-item-title={item.title}
+											data-item-status={item.status}
+										>
 											<TableCell>
 												<div className="grid gap-0.5">
 													<p className="font-medium">{item.title}</p>
