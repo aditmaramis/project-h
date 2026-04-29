@@ -172,6 +172,7 @@ function HeaderUserMenu({ userId, userName, avatarUrl }: HeaderUserMenuProps) {
 			onOpenChange={setOpen}
 		>
 			<DropdownMenuTrigger
+				data-testid="header-user-menu-trigger"
 				className="flex items-center gap-2 rounded-md px-1 py-1 outline-hidden transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring"
 				onMouseEnter={handleMouseEnter}
 				onMouseLeave={handleMouseLeave}
@@ -229,6 +230,7 @@ function HeaderUserMenu({ userId, userName, avatarUrl }: HeaderUserMenuProps) {
 				</DropdownMenuItem>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem
+					data-testid="auth-logout"
 					variant="destructive"
 					onClick={handleLogout}
 				>
@@ -249,6 +251,7 @@ function HeaderAuthButtons() {
 				mode="login"
 				trigger={
 					<Button
+						data-testid="auth-login-trigger"
 						variant="ghost"
 						size="sm"
 					>

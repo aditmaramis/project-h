@@ -350,11 +350,34 @@ setRequestLocale(locale);
 ```bash
 npm run dev          # Start dev server
 npm run build        # Generate Prisma + build
+npm run test:e2e     # Run Playwright E2E suite (Chromium)
+npm run test:e2e:ui  # Open Playwright UI mode
+npm run test:e2e:headed # Run E2E tests in headed browser
+npm run test:e2e:report # Open Playwright HTML report
 npm run db:migrate   # Run Prisma migrations
 npm run db:push      # Push schema to DB (no migration)
 npm run db:seed      # Seed categories + promote ADMIN_EMAIL
 npm run db:studio    # Open Prisma Studio
 ```
+
+---
+
+## E2E Testing (Playwright)
+
+- Framework: Playwright (`@playwright/test`) with config in `playwright.config.ts`
+- Test location: `e2e/` (current smoke coverage in `e2e/auth-redirect.spec.ts`)
+- Selector strategy: prefer stable `data-testid` attributes for auth/menu interactions
+- Required env vars for auth smoke tests:
+  - `E2E_ADMIN_EMAIL`
+  - `E2E_ADMIN_PASSWORD`
+  - `E2E_USER_EMAIL`
+  - `E2E_USER_PASSWORD`
+- Optional env var:
+  - `E2E_BASE_URL` (defaults to `http://127.0.0.1:3000`)
+- Reliability rules:
+  - Use `expect`/`expect.poll` assertions instead of fixed delays
+  - Avoid brittle text-only selectors for translated UI
+  - Keep PR checks to Chromium; run cross-browser expansion only when needed
 
 ---
 

@@ -95,6 +95,7 @@ export function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
 			</div>
 			{error && <p className="text-sm text-destructive">{error}</p>}
 			<Button
+				data-testid="auth-login-submit"
 				type="submit"
 				disabled={loading}
 			>
