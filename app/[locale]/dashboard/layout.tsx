@@ -36,8 +36,13 @@ export default async function DashboardLayout({ children, params }: Props) {
 
 	const profile = await prisma.profile.findUnique({
 		where: { id: user.id },
-		select: { name: true, avatarUrl: true },
+		select: { name: true, avatarUrl: true, role: true },
 	});
+
+	if (profile?.role === 'ADMIN') {
+		redirect({ href: '/admin', locale });
+		return null;
+	}
 
 	return (
 		<SidebarProvider className="min-h-0! flex-1 **:data-[slot=sidebar-container]:top-21! **:data-[slot=sidebar-container]:h-[calc(100svh-5.25rem)]!">

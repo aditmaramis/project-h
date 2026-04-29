@@ -42,19 +42,19 @@ Features:
 - All actions create `AdminAction` audit entries
 - API routes: `app/api/admin/items/route.ts` (GET list), `app/api/admin/items/[id]/route.ts` (PATCH/DELETE)
 
-## Phase 4: Reports System — NOT STARTED
+## Phase 4: Reports System ✅ COMPLETE
 
-Page: `app/[locale]/admin/reports/page.tsx`
+- Page (`app/[locale]/admin/reports/page.tsx`): SSR reports queue with status tabs (PENDING / REVIEWED / DISMISSED), per-status counts, reporter details, target links, reason/description, and resolution metadata display
+- Component (`components/admin/report-status-actions.tsx`): review/dismiss actions with moderation dialog, admin note input, and required reason when dismissing
+- API route (`app/api/admin/reports/route.ts`): GET list with optional status filter + grouped status counts, protected by auth and ADMIN role checks
+- API route (`app/api/admin/reports/[id]/route.ts`): PATCH resolve/dismiss with `resolveReportSchema` validation, pending-only conflict guard, and resolution metadata updates (`resolvedBy`, `resolvedAt`, `adminNote`)
+- Audit logging: every moderation mutation writes an `AdminAction` entry (`RESOLVE_REPORT` / `DISMISS_REPORT`)
 
-Features:
+## Recent Updates
 
-- Reports queue with status tabs (PENDING / REVIEWED / DISMISSED)
-- Show reporter info, target type (ITEM/PROFILE), reason, description
-- Link to reported item or profile
-- Actions: resolve (with admin note), dismiss (with reason)
-- Resolution updates `resolvedBy`, `resolvedAt`, `adminNote`
-- All actions create `AdminAction` audit entries
-- API routes: `app/api/admin/reports/route.ts` (GET list), `app/api/admin/reports/[id]/route.ts` (PATCH resolve/dismiss)
+- Admin login redirect (2026-04-29): after successful sign-in, `ADMIN` users are redirected to `/admin` (`components/login-form.tsx`)
+- Server-side fallback (2026-04-29): authenticated `ADMIN` users are redirected from `/dashboard` to `/admin` in dashboard layout (`app/[locale]/dashboard/layout.tsx`)
+- Logout redirect cleanup (2026-04-29): sign-out now navigates to `/` to prevent `/?redirectTo=%2Fadmin` after admin logout (`components/layout/header-auth.tsx`, `components/logout-button.tsx`)
 
 ## Phase 5: Banned Keywords — NOT STARTED
 

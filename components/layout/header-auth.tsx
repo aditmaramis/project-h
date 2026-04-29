@@ -132,6 +132,7 @@ function HeaderUserMenu({ userId, userName, avatarUrl }: HeaderUserMenuProps) {
 	async function handleLogout() {
 		await supabase.auth.signOut();
 		startTransition(() => {
+			router.replace('/');
 			router.refresh();
 		});
 	}

@@ -44,6 +44,23 @@ export function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
 			return;
 		}
 
+		try {
+			const profileResponse = await fetch('/api/profile', {
+				cache: 'no-store',
+			});
+			if (profileResponse.ok) {
+				const profile = (await profileResponse.json()) as { role?: string };
+				if (profile.role === 'ADMIN') {
+					onSuccess?.();
+					router.push('/admin');
+					router.refresh();
+					return;
+				}
+			}
+		} catch {
+			// Fallback to standard behavior if profile lookup fails.
+		}
+
 		onSuccess?.();
 		router.refresh();
 	}
